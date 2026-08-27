@@ -1,0 +1,3 @@
+{
+  "installCommand": "npm install --ignore-scripts && node ./node_modules/esbuild/install.js && chmod +x ./node_modules/.bin/*"
+}
