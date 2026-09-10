@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Colour Picnic | UNN Freshers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16161A;
+    --paper:#FBF9F5;
+    --red:#FF4757;
+    --amber:#FFB800;
+    --sky:#2E9CFF;
+    --grass:#3FD68A;
+    --violet:#A66BFF;
+    --tangerine:#FF8C42;
+    --max:620px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+    padding:40px 20px 80px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* Decorative backdrop glows */
+  .splash{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(36px);
+    opacity:0.35;
+    z-index:0;
+    pointer-events:none;
+  }
+  .s1{ width:280px; height:280px; background:var(--red); top:-80px; left:-80px; }
+  .s2{ width:240px; height:240px; background:var(--sky); bottom:10%; right:-60px; }
+  .s3{ width:180px; height:180px; background:var(--amber); top:30%; right:5%; opacity:0.25; }
+
+  .wrap{
+    width:100%;
+    max-width:var(--max);
+    position:relative;
+    z-index:1;
+  }
+
+  .top-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:32px;
+  }
+
+  .back-link{
+    color:#A6A49E;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:color 0.2s;
+  }
+  .back-link:hover{ color:var(--paper); }
+
+  .badge-free{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:100px;
+    background:rgba(63,214,138,0.15);
+    border:1px solid rgba(63,214,138,0.3);
+    color:var(--grass);
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+
+  .form-card{
+    background:rgba(255,255,255,0.035);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:24px;
+    padding:44px 36px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.5);
+    backdrop-filter:blur(16px);
+  }
+
+  .form-card .headline{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(32px, 6vw, 44px);
+    text-transform:uppercase;
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .form-card .headline span{ color:var(--amber); }
+
+  .form-subtitle{
+    color:#A6A49E;
+    font-size:15px;
+    margin-bottom:32px;
+  }
+
+  .form-group{
+    margin-bottom:22px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .form-label{
+    font-size:14px;
+    font-weight:600;
+    color:#D8D6D0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .form-label .optional-tag{
+    font-size:12px;
+    color:#8C8A85;
+    font-weight:400;
+  }
+
+  .form-input, .form-select, .form-textarea{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    padding:14px 16px;
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    transition:all 0.2s ease;
+    outline:none;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus{
+    border-color:var(--amber);
+    background:rgba(255,255,255,0.09);
+    box-shadow:0 0 0 3px rgba(255,184,0,0.2);
+  }
+
+  .form-select option{
+    background:#1b1b20;
+    color:var(--paper);
+  }
+
+  .form-textarea{
+    resize:vertical;
+    min-height:95px;
+  }
+
+  .btn-submit{
+    width:100%;
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    padding:18px;
+    border-radius:100px;
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(120deg, var(--red), var(--tangerine));
+    color:var(--ink);
+    margin-top:12px;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-submit:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 24px rgba(255,71,87,0.3);
+  }
+
+  /* Success Digital Pass / Ticket Preview */
+  .ticket-preview{
+    display:none;
+    margin:0 auto;
+    position:relative;
+  }
+
+  .ticket-preview.active{ display:block; animation:fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ── Realistic E-Ticket (matches reference image) ── */
+  .eticket{
+    width:100%;
+    border-radius:18px;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:190px 1fr 75px;
+    background:#16161A;
+    box-shadow:0 30px 70px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.12);
+    margin-bottom:24px;
+    position:relative;
+  }
+
+  /* LEFT: Photo */
+  .et-photo{
+    position:relative;
+    overflow:hidden;
+    background:#222;
+  }
+  .et-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+    filter:brightness(0.9) saturate(1.2);
+  }
+  .et-photo::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+  }
+
+  /* MIDDLE: Info area */
+  .et-info{
+    background:#141417;
+    padding:20px 22px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  .et-event-name{
+    font-family:'Anton', sans-serif;
+    font-size:26px;
+    font-weight:400;
+    line-height:1.05;
+    color:#FFFFFF;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    margin-bottom:16px;
+  }
+
+  /* 2x2 grid with subtle borders */
+  .et-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  .et-cell{
+    padding:9px 12px;
+    border:1px solid rgba(255,255,255,0.18);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    background:rgba(255,255,255,0.02);
+  }
+
+  .et-cell-lbl{
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#8C8A85;
+    margin-bottom:3px;
+  }
+
+  .et-cell-val{
+    font-size:13px;
+    font-weight:700;
+    color:#FFFFFF;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* RIGHT: Yellow ticket stub with notches & barcode */
+  .et-stub{
+    background:#FDB913;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 6px;
+    position:relative;
+    overflow:hidden;
+    border-left:2px dashed rgba(0,0,0,0.25);
+  }
+
+  /* Semi-circular notch cutouts */
+  .et-stub::before{
+    content:'';
+    position:absolute;
+    top:-12px;
+    left:50%;
+    transform:translateX(-50%);
+    width:24px;
+    height:24px;
+    background:var(--ink);
+    border-radius:50%;
+  }
+
+  .et-stub::after{
+    content:'';
+    position:absolute;
+    bottom:-12px;
+    left:50%;
+    transform:translateX(-50%);
+    width:24px;
+    height:24px;
+    background:var(--ink);
+    border-radius:50%;
+  }
+
+  .et-barcode{
+    display:flex;
+    gap:1.5px;
+    align-items:flex-end;
+    height:24px;
+    margin-top:4px;
+  }
+  .et-barcode span{
+    display:inline-block;
+    width:2px;
+    background:#111;
+    border-radius:0.5px;
+  }
+
+  .et-stub-text{
+    writing-mode:vertical-rl;
+    text-orientation:mixed;
+    transform:rotate(180deg);
+    font-size:9px;
+    font-weight:800;
+    color:#111;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .et-stub-text .stub-id{
+    font-weight:900;
+    letter-spacing:0.15em;
+  }
+
+  .et-stub-boxes{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    align-items:center;
+  }
+
+  .et-stub-row{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    font-size:8px;
+    font-weight:800;
+    color:#111;
+    letter-spacing:0.08em;
+  }
+  .et-stub-row .sbox{
+    width:8px;
+    height:8px;
+    border:1.5px solid #111;
+    display:inline-block;
+  }
+
+  /* WhatsApp Community & Action Buttons */
+  .ticket-actions{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin:20px 0 28px;
+  }
+
+  .wa-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:16px 28px;
+    background:#25D366;
+    color:#FFFFFF;
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    border-radius:100px;
+    text-decoration:none;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:0 8px 24px rgba(37,211,102,0.35);
+  }
+  .wa-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(37,211,102,0.5);
+  }
+
+  .ticket-success-msg{
+    text-align:center;
+    padding:16px;
+    border-radius:14px;
+    background:rgba(63,214,138,0.12);
+    border:1px solid rgba(63,214,138,0.25);
+    color:var(--grass);
+    font-size:14px;
+    font-weight:600;
+  }
+
+  /* Faculty Color Groups Section */
+  .color-groups-section{
+    margin-top:40px;
+    padding-top:32px;
+    border-top:1px solid rgba(255,255,255,0.1);
+  }
+
+  .groups-title{
+    font-family:'Anton', sans-serif;
+    font-size:22px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin-bottom:6px;
+    color:var(--paper);
+    text-align:center;
+  }
+
+  .groups-sub{
+    font-size:13px;
+    color:#A6A49E;
+    text-align:center;
+    margin-bottom:20px;
+  }
+
+  .groups-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+
+  .color-group-card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    padding:16px;
+    transition:transform 0.2s, border-color 0.2s;
+  }
+
+  .color-group-card.user-team{
+    border:2px solid var(--amber);
+    background:rgba(255,184,0,0.08);
+    box-shadow:0 0 20px rgba(255,184,0,0.15);
+  }
+
+  .group-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .group-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+
+  .group-name{
+    font-weight:700;
+    font-size:14px;
+    color:var(--paper);
+  }
+
+  .group-tag{
+    font-size:11px;
+    font-weight:600;
+    color:#A6A49E;
+    margin-left:auto;
+  }
+
+  .group-faculties{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+
+  .group-faculties li{
+    font-size:12px;
+    color:#C5C3BC;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .group-faculties li::before{
+    content:"•";
+    color:#8C8A85;
+  }
+
+  .btn-return{
+    display:inline-block;
+    margin-top:28px;
+    color:#D8D6D0;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    text-align:center;
+    width:100%;
+  }
+  .btn-return:hover{ color:var(--paper); }
+
+  @media (max-width:600px){
+    .groups-grid{ grid-template-columns:1fr; }
+    .form-card{ padding:32px 20px; }
+    .eticket{
+      grid-template-columns:110px 1fr 58px;
+    }
+    .et-event-name{
+      font-size:18px;
+      margin-bottom:10px;
+    }
+    .et-info{
+      padding:12px 10px;
+    }
+    .et-cell{
+      padding:6px 8px;
+    }
+    .et-cell-lbl{
+      font-size:8px;
+    }
+    .et-cell-val{
+      font-size:11px;
+    }
+    .et-stub{
+      padding:8px 4px;
+    }
+    .et-stub-text{
+      font-size:7.5px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="splash s1"></div>
+  <div class="splash s2"></div>
+  <div class="splash s3"></div>
+
+  <div class="wrap">
+    <div class="top-nav">
+      <a href="index.html" class="back-link">← Back to Event Details</a>
+      <span class="badge-free">Free Entry</span>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="form-card" id="formContainer">
+      <h1 class="headline">Register for <span>Colour Picnic</span></h1>
+      <p class="form-subtitle">Fill in your details to get your official faculty colour and reserve your free spot.</p>
+
+      <form id="picnicRegistrationForm">
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name</label>
+          <input type="text" id="fullName" class="form-input" placeholder="e.g. Chinedu Okafor" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phoneNumber">Phone Number</label>
+          <input type="tel" id="phoneNumber" class="form-input" placeholder="e.g. 08012345678" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="faculty">Faculty</label>
+          <select id="faculty" class="form-select" required>
+            <option value="" disabled selected>Select your faculty</option>
+            <option value="Agriculture" data-color="#3FD68A">Faculty of Agriculture</option>
+            <option value="Arts" data-color="#FFB800">Faculty of Arts</option>
+            <option value="Basic Medical Sciences" data-color="#FF4757">Faculty of Basic Medical Sciences</option>
+            <option value="Biological Sciences" data-color="#2E9CFF">Faculty of Biological Sciences</option>
+            <option value="Business Administration" data-color="#FF8C42">Faculty of Business Administration</option>
+            <option value="Dentistry" data-color="#A66BFF">Faculty of Dentistry</option>
+            <option value="Education" data-color="#FFB800">Faculty of Education</option>
+            <option value="Engineering" data-color="#FF4757">Faculty of Engineering</option>
+            <option value="Environmental Studies" data-color="#3FD68A">Faculty of Environmental Studies</option>
+            <option value="Health Sciences & Technology" data-color="#2E9CFF">Faculty of Health Sciences & Technology</option>
+            <option value="Law" data-color="#A66BFF">Faculty of Law</option>
+            <option value="Medical Sciences" data-color="#FF4757">Faculty of Medical Sciences</option>
+            <option value="Pharmaceutical Sciences" data-color="#3FD68A">Faculty of Pharmaceutical Sciences</option>
+            <option value="Physical Sciences" data-color="#2E9CFF">Faculty of Physical Sciences</option>
+            <option value="Social Sciences" data-color="#FF8C42">Faculty of Social Sciences</option>
+            <option value="Veterinary Medicine" data-color="#3FD68A">Faculty of Veterinary Medicine</option>
+            <option value="Vocational & Technical Education" data-color="#FFB800">Faculty of Vocational & Technical Education</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="department">Department</label>
+          <input type="text" id="department" class="form-input" placeholder="e.g. Computer Science, Accounting, Law" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lookingForwardTo">
+            <span>What are you looking forward to?</span>
+            <span class="optional-tag">Optional</span>
+          </label>
+          <textarea id="lookingForwardTo" class="form-textarea" placeholder="Games, networking, good music, food..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Claim My Faculty Colour</button>
+      </form>
+    </div>
+
+    <!-- Realistic E-Ticket Pass Card Revealed After Registration -->
+    <div class="ticket-preview" id="ticketCard">
+
+      <!-- ===== E-TICKET (Matches exact reference design) ===== -->
+      <div class="eticket" id="eticket">
+
+        <!-- LEFT: Aerial Picnic Photo -->
+        <div class="et-photo">
+          <img src="picnic 1.jpg" alt="UNN Freshers Colour Picnic">
+        </div>
+
+        <!-- MIDDLE: Event Info Grid -->
+        <div class="et-info">
+          <div class="et-event-name">UNN FRESHERS<br>COLOUR PICNIC 2026</div>
+          <div class="et-grid">
+            <div class="et-cell">
+              <span class="et-cell-lbl">DATE</span>
+              <span class="et-cell-val" id="tkDate">Saturday, 26 September 2026</span>
+            </div>
+            <div class="et-cell">
+              <span class="et-cell-lbl">ATTENDEE</span>
+              <span class="et-cell-val" id="tkAttendee">Student Name</span>
+            </div>
+            <div class="et-cell">
+              <span class="et-cell-lbl">FACULTY</span>
+              <span class="et-cell-val" id="tkFaculty">Faculty</span>
+            </div>
+            <div class="et-cell">
+              <span class="et-cell-lbl">COLOUR / VENUE</span>
+              <span class="et-cell-val" id="tkColourVenue">Team | CEDR Field</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Yellow Perforated Stub with Barcodes and Notches -->
+        <div class="et-stub">
+          <!-- Top Barcode -->
+          <div class="et-barcode" id="tkBarcode1"></div>
+
+          <!-- Rotated Ticket Number -->
+          <div class="et-stub-text">
+            TICKET NO:&nbsp;<span class="stub-id" id="tkTicketNo">UCP-YJZM8A</span>
+          </div>
+
+          <!-- Row / Seat Checkboxes -->
+          <div class="et-stub-boxes">
+            <div class="et-stub-row">Row&nbsp;<span class="sbox"></span></div>
+            <div class="et-stub-row">Seat&nbsp;<span class="sbox"></span></div>
+          </div>
+
+          <!-- Bottom Barcode -->
+          <div class="et-barcode" id="tkBarcode2"></div>
+        </div>
+
+      </div>
+      <!-- /E-TICKET -->
+
+      <div class="ticket-success-msg">
+        ✓ Pass Confirmed! Screenshot or save your e-ticket and show it at the CEDR Field entrance.
+      </div>
+
+      <!-- Action Buttons: WhatsApp Community -->
+      <div class="ticket-actions">
+        <a href="https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs" target="_blank" rel="noopener noreferrer" class="wa-btn">
+          <span>💬</span> Join Official Freshers WhatsApp Community
+        </a>
+      </div>
+
+      <!-- UNN Faculty Colour Groupings Breakdown -->
+      <div class="color-groups-section">
+        <h3 class="groups-title">UNN Faculty Colour Teams</h3>
+        <p class="groups-sub">Find your faculty allies and know who you're competing with:</p>
+        <div class="groups-grid" id="facultyGroupsContainer">
+          <!-- Populated dynamically from event.json -->
+        </div>
+      </div>
+
+      <a href="index.html" class="btn-return">← Back to Event Homepage</a>
+    </div>
+
+  </div>
+
+  <script>
+    let globalEventData = null;
+
+    // Sync theme and event details from event.json
+    (async function loadEventMeta() {
+      try {
+        const res = await fetch('event.json');
+        if (!res.ok) return;
+        const data = await res.json();
+        globalEventData = data.event;
+        const ev = data.event;
+        if (!ev) return;
+
+        // Dynamically populate faculty select if available in event.json
+        if (ev.registrationForm && Array.isArray(ev.registrationForm.fields)) {
+          const facField = ev.registrationForm.fields.find(f => f.name === 'faculty');
+          const facSelect = document.getElementById('faculty');
+          if (facField && Array.isArray(facField.options) && facSelect) {
+            facSelect.innerHTML = '<option value="" disabled selected>Select your faculty</option>' + 
+              facField.options.map(opt => {
+                const name = typeof opt === 'string' ? opt : opt.name;
+                const color = typeof opt === 'object' ? opt.color : '#FF4757';
+                return `<option value="${name}" data-color="${color}">${name}</option>`;
+              }).join('');
+          }
+        }
+
+        if (ev.schedule) {
+          const scheduleEl = document.getElementById('ticketSchedule');
+          const venueEl = document.getElementById('ticketVenue');
+          if (scheduleEl && ev.schedule.date && ev.schedule.time) {
+            scheduleEl.textContent = `${ev.schedule.date.replace('Saturday', 'Sat')} · ${ev.schedule.time}`;
+          }
+          if (venueEl && ev.schedule.venue) {
+            venueEl.textContent = ev.schedule.venue;
+          }
+        }
+
+        if (ev.theme && ev.theme.palette) {
+          const root = document.documentElement;
+          Object.entries(ev.theme.palette).forEach(([k, v]) => {
+            root.style.setProperty(`--${k}`, v);
+          });
+        }
+      } catch (err) {
+        console.warn('Fallback to defaults:', err);
+      }
+    })();
+
+    // Handle Form Submission
+    const regForm = document.getElementById('picnicRegistrationForm');
+    if (regForm) {
+      regForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phoneNumber').value.trim();
+        const facultySelect = document.getElementById('faculty');
+        const facultyOption = facultySelect.options[facultySelect.selectedIndex];
+        const selectedFacultyText = facultyOption.textContent;
+        const color = facultyOption.getAttribute('data-color') || '#FF4757';
+        const dept = document.getElementById('department').value.trim();
+
+        // Generate unique ticket number like UCP-YJZM8A
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let randomCode = '';
+        for (let i = 0; i < 6; i++) {
+          randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const ticketId = `UCP-${randomCode}`;
+
+        // Populate realistic stub ticket fields
+        const tkAttendee = document.getElementById('tkAttendee');
+        const tkFaculty = document.getElementById('tkFaculty');
+        const tkDate = document.getElementById('tkDate');
+        const tkColourVenue = document.getElementById('tkColourVenue');
+        const tkTicketNo = document.getElementById('tkTicketNo');
+
+        if (tkAttendee) tkAttendee.textContent = name;
+        if (tkFaculty) tkFaculty.textContent = selectedFacultyText.replace('Faculty of ', '');
+        if (tkTicketNo) tkTicketNo.textContent = ticketId;
+
+        if (globalEventData && globalEventData.schedule) {
+          if (tkDate) tkDate.textContent = `${globalEventData.schedule.date} 2026`;
+        }
+
+        // Find color team name
+        let teamName = 'Allies';
+        if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
+          const matchedGroup = globalEventData.facultyColorGroups.find(g => 
+            g.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase())
+          );
+          if (matchedGroup) teamName = `${matchedGroup.colorName} (${matchedGroup.team})`;
+        }
+        if (tkColourVenue) tkColourVenue.textContent = `${teamName} | CEDR Field`;
+
+        // Generate dynamic barcode pattern in stub
+        function renderBarcode(containerId) {
+          const el = document.getElementById(containerId);
+          if (!el) return;
+          el.innerHTML = '';
+          const heights = [14, 22, 10, 24, 18, 12, 24, 16, 20, 10, 22, 18, 14, 24, 12];
+          heights.forEach(h => {
+            const bar = document.createElement('span');
+            bar.style.height = `${h}px`;
+            el.appendChild(bar);
+          });
+        }
+        renderBarcode('tkBarcode1');
+        renderBarcode('tkBarcode2');
+
+        // Render faculty color groups breakdown
+        const groupsContainer = document.getElementById('facultyGroupsContainer');
+        const colorGroups = (globalEventData && globalEventData.facultyColorGroups) ? globalEventData.facultyColorGroups : [
+          {
+            colorName: "Red",
+            hex: "#FF4757",
+            team: "Team Blaze",
+            faculties: ["Faculty of Engineering", "Faculty of Medical Sciences", "Faculty of Basic Medical Sciences"]
+          },
+          {
+            colorName: "Sky Blue",
+            hex: "#2E9CFF",
+            team: "Team Waves",
+            faculties: ["Faculty of Biological Sciences", "Faculty of Physical Sciences", "Faculty of Health Sciences & Technology"]
+          },
+          {
+            colorName: "Grass Green",
+            hex: "#3FD68A",
+            team: "Team Flora",
+            faculties: ["Faculty of Agriculture", "Faculty of Pharmaceutical Sciences", "Faculty of Veterinary Medicine", "Faculty of Environmental Studies"]
+          },
+          {
+            colorName: "Amber Yellow",
+            hex: "#FFB800",
+            team: "Team Glow",
+            faculties: ["Faculty of Arts", "Faculty of Education", "Faculty of Vocational & Technical Education"]
+          },
+          {
+            colorName: "Royal Violet",
+            hex: "#A66BFF",
+            team: "Team Royals",
+            faculties: ["Faculty of Law", "Faculty of Dentistry"]
+          },
+          {
+            colorName: "Tangerine Orange",
+            hex: "#FF8C42",
+            team: "Team Titans",
+            faculties: ["Faculty of Business Administration", "Faculty of Social Sciences"]
+          }
+        ];
+
+        if (groupsContainer) {
+          groupsContainer.innerHTML = colorGroups.map(group => {
+            const isUserTeam = group.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase());
+            return `
+              <div class="color-group-card ${isUserTeam ? 'user-team' : ''}">
+                <div class="group-header">
+                  <span class="group-dot" style="background:${group.hex}"></span>
+                  <span class="group-name" style="color:${group.hex}">${group.team} (${group.colorName})</span>
+                  ${isUserTeam ? '<span class="group-tag" style="color:var(--amber)">★ YOUR TEAM</span>' : ''}
+                </div>
+                <ul class="group-faculties">
+                  ${group.faculties.map(fac => `<li style="${fac.toLowerCase() === selectedFacultyText.toLowerCase() ? 'font-weight:700; color:var(--paper);' : ''}">${fac}</li>`).join('')}
+                </ul>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Swap view
+        document.getElementById('formContainer').style.display = 'none';
+        const ticketCard = document.getElementById('ticketCard');
+        ticketCard.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  </script>
+</body>
+</html>

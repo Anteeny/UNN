@@ -1,0 +1,220 @@
+{
+  "event": {
+    "title": "Colour Picnic",
+    "subtitle": "A field day for every UNN fresher — register for your faculty colour, come dressed in it, and paint the field.",
+    "category": "Campus Life",
+    "campus": "UNN Enugu Campus",
+    "audience": "All freshers",
+    "admission": {
+      "isFree": true,
+      "notice": "Free entry — registration is compulsory"
+    },
+    "schedule": {
+      "date": "Saturday, 26 September",
+      "time": "2:00 PM",
+      "venue": "CEDR Field",
+      "isoTimestamp": "2026-09-26T14:00:00+01:00",
+      "countdown": {
+        "enabled": true,
+        "label": "Countdown to Colour Picnic"
+      }
+    },
+    "description": "Every UNN fresher gets a faculty colour on registration. Show up dressed in yours — the field turns into one big wave of faculty colours, games, and good music. This is your first real UNN memory before lectures even start.",
+    "activities": [
+      {
+        "name": "Faculty games & tournaments",
+        "themeColor": "#FF4757"
+      },
+      {
+        "name": "Fun games",
+        "themeColor": "#FFB800"
+      },
+      {
+        "name": "Networking",
+        "themeColor": "#2E9CFF"
+      },
+      {
+        "name": "Food & picnic",
+        "themeColor": "#3FD68A"
+      },
+      {
+        "name": "Music & good vibes",
+        "themeColor": "#A66BFF"
+      }
+    ],
+    "callToAction": {
+      "registerText": "Register now",
+      "registerUrl": "register.html",
+      "detailsText": "See details",
+      "detailsUrl": "#details",
+      "footerNote": "Entry is free, but registration is compulsory to get your faculty colour."
+    },
+    "registrationForm": {
+      "title": "Register for Colour Picnic",
+      "subtitle": "Get your official faculty colour and reserve your free spot.",
+      "fields": [
+        {
+          "name": "fullName",
+          "label": "Full Name",
+          "type": "text",
+          "placeholder": "e.g. Chinedu Okafor",
+          "required": true
+        },
+        {
+          "name": "phoneNumber",
+          "label": "Phone Number",
+          "type": "tel",
+          "placeholder": "e.g. 08012345678",
+          "required": true
+        },
+        {
+          "name": "faculty",
+          "label": "Faculty",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "name": "Faculty of Agriculture", "color": "#3FD68A", "team": "Team Flora", "colorName": "Grass Green" },
+            { "name": "Faculty of Arts", "color": "#FFB800", "team": "Team Glow", "colorName": "Amber Yellow" },
+            { "name": "Faculty of Basic Medical Sciences", "color": "#FF4757", "team": "Team Blaze", "colorName": "Red" },
+            { "name": "Faculty of Biological Sciences", "color": "#2E9CFF", "team": "Team Waves", "colorName": "Sky Blue" },
+            { "name": "Faculty of Business Administration", "color": "#FF8C42", "team": "Team Titans", "colorName": "Tangerine Orange" },
+            { "name": "Faculty of Dentistry", "color": "#A66BFF", "team": "Team Royals", "colorName": "Royal Violet" },
+            { "name": "Faculty of Education", "color": "#FFB800", "team": "Team Glow", "colorName": "Amber Yellow" },
+            { "name": "Faculty of Engineering", "color": "#FF4757", "team": "Team Blaze", "colorName": "Red" },
+            { "name": "Faculty of Environmental Studies", "color": "#3FD68A", "team": "Team Flora", "colorName": "Grass Green" },
+            { "name": "Faculty of Health Sciences & Technology", "color": "#2E9CFF", "team": "Team Waves", "colorName": "Sky Blue" },
+            { "name": "Faculty of Law", "color": "#A66BFF", "team": "Team Royals", "colorName": "Royal Violet" },
+            { "name": "Faculty of Medical Sciences", "color": "#FF4757", "team": "Team Blaze", "colorName": "Red" },
+            { "name": "Faculty of Pharmaceutical Sciences", "color": "#3FD68A", "team": "Team Flora", "colorName": "Grass Green" },
+            { "name": "Faculty of Physical Sciences", "color": "#2E9CFF", "team": "Team Waves", "colorName": "Sky Blue" },
+            { "name": "Faculty of Social Sciences", "color": "#FF8C42", "team": "Team Titans", "colorName": "Tangerine Orange" },
+            { "name": "Faculty of Veterinary Medicine", "color": "#3FD68A", "team": "Team Flora", "colorName": "Grass Green" },
+            { "name": "Faculty of Vocational & Technical Education", "color": "#FFB800", "team": "Team Glow", "colorName": "Amber Yellow" }
+          ]
+        },
+        {
+          "name": "department",
+          "label": "Department",
+          "type": "text",
+          "placeholder": "e.g. Computer Science, Accounting, Law",
+          "required": true
+        },
+        {
+          "name": "lookingForwardTo",
+          "label": "What are you looking forward to?",
+          "type": "textarea",
+          "placeholder": "Games, networking, good music, food... (optional)",
+          "required": false
+        }
+      ],
+      "submitButtonText": "Claim My Faculty Colour",
+      "postSubmission": {
+        "ticket": {
+          "design": "horizontal-stub",
+          "title": "UNN FRESHERS COLOUR PICNIC 2026",
+          "photo": "picnic 1.jpg",
+          "fields": [
+            { "label": "DATE", "key": "date", "default": "Saturday, 26 September 2026" },
+            { "label": "ATTENDEE", "key": "fullName" },
+            { "label": "FACULTY", "key": "faculty" },
+            { "label": "COLOUR / VENUE", "key": "colourVenue", "default": "CEDR Field" }
+          ],
+          "stub": {
+            "color": "#FDB913",
+            "prefix": "UCP-",
+            "labels": ["Row", "Seat", "Ticket No"]
+          }
+        },
+        "community": {
+          "platform": "WhatsApp",
+          "title": "Join the Official UNN Freshers WhatsApp Community",
+          "description": "Connect with fellow freshers, get updates on team games, colours, and picnic arrivals.",
+          "buttonText": "Join WhatsApp Community",
+          "url": "https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs"
+        },
+        "colorTeamsRoster": {
+          "title": "UNN Faculty Colour Teams",
+          "subtitle": "Find your faculty allies and know who you're competing with:",
+          "highlightUserTeam": true
+        }
+      }
+    },
+    "facultyColorGroups": [
+      {
+        "colorName": "Red",
+        "hex": "#FF4757",
+        "team": "Team Blaze",
+        "faculties": [
+          "Faculty of Engineering",
+          "Faculty of Medical Sciences",
+          "Faculty of Basic Medical Sciences"
+        ]
+      },
+      {
+        "colorName": "Sky Blue",
+        "hex": "#2E9CFF",
+        "team": "Team Waves",
+        "faculties": [
+          "Faculty of Biological Sciences",
+          "Faculty of Physical Sciences",
+          "Faculty of Health Sciences & Technology"
+        ]
+      },
+      {
+        "colorName": "Grass Green",
+        "hex": "#3FD68A",
+        "team": "Team Flora",
+        "faculties": [
+          "Faculty of Agriculture",
+          "Faculty of Pharmaceutical Sciences",
+          "Faculty of Veterinary Medicine",
+          "Faculty of Environmental Studies"
+        ]
+      },
+      {
+        "colorName": "Amber Yellow",
+        "hex": "#FFB800",
+        "team": "Team Glow",
+        "faculties": [
+          "Faculty of Arts",
+          "Faculty of Education",
+          "Faculty of Vocational & Technical Education"
+        ]
+      },
+      {
+        "colorName": "Royal Violet",
+        "hex": "#A66BFF",
+        "team": "Team Royals",
+        "faculties": [
+          "Faculty of Law",
+          "Faculty of Dentistry"
+        ]
+      },
+      {
+        "colorName": "Tangerine Orange",
+        "hex": "#FF8C42",
+        "team": "Team Titans",
+        "faculties": [
+          "Faculty of Business Administration",
+          "Faculty of Social Sciences"
+        ]
+      }
+    ],
+    "theme": {
+      "palette": {
+        "ink": "#16161A",
+        "paper": "#FBF9F5",
+        "red": "#FF4757",
+        "amber": "#FFB800",
+        "sky": "#2E9CFF",
+        "grass": "#3FD68A",
+        "violet": "#A66BFF",
+        "tangerine": "#FF8C42"
+      },
+      "fonts": [
+        "Anton",
+        "Work Sans"
+      ]
+    }
+  }
+}

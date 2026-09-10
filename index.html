@@ -1,12 +1,674 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UNN CGPA Target | Freshers Hub</title>
-  </head>
-  <body class="bg-slate-950">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colour Picnic — UNN Freshers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16161A;
+    --paper:#FBF9F5;
+    --red:#FF4757;
+    --amber:#FFB800;
+    --sky:#2E9CFF;
+    --grass:#3FD68A;
+    --violet:#A66BFF;
+    --tangerine:#FF8C42;
+    --max:920px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- HERO ---------- */
+
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:72px 0 96px;
+    text-align:center;
+    background-image:
+      linear-gradient(180deg, rgba(22,22,26,0.55) 0%, rgba(22,22,26,0.88) 62%, var(--ink) 100%),
+      url('assets/hero-photo.jpg');
+    background-size:cover;
+    background-position:center 30%;
+  }
+
+  .splash{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(18px);
+    opacity:0.55;
+    z-index:0;
+    mix-blend-mode:screen;
+  }
+  .s1{ width:220px; height:220px; background:var(--red); top:-60px; left:-70px; }
+  .s2{ width:160px; height:160px; background:var(--sky); top:40px; right:-50px; }
+  .s3{ width:120px; height:120px; background:var(--amber); bottom:10px; left:6%; }
+  .s4{ width:90px; height:90px; background:var(--violet); bottom:-30px; right:12%; }
+  .s5{ width:70px; height:70px; background:var(--grass); top:10%; left:38%; opacity:0.4;}
+
+  .hero-content{ position:relative; z-index:1; }
+
+  .eyebrow{
+    display:inline-block;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--amber);
+    margin-bottom:18px;
+  }
+
+  .headline{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(52px, 12vw, 108px);
+    line-height:0.92;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+  }
+  .headline .c1{ color:var(--red); }
+  .headline .c2{ color:var(--amber); }
+  .headline .c3{ color:var(--sky); }
+  .headline .c4{ color:var(--grass); }
+  .headline .c5{ color:var(--violet); }
+  .headline .c6{ color:var(--tangerine); }
+
+  .sub{
+    margin-top:20px;
+    font-size:19px;
+    font-weight:500;
+    color:#D8D6D0;
+    max-width:480px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .pills{
+    margin-top:36px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    padding:10px 18px;
+    border-radius:100px;
+    font-size:15px;
+    font-weight:500;
+    color:var(--paper);
+  }
+
+  .dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  /* Countdown Timer */
+  .countdown-box{
+    margin-top:28px;
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+
+  .countdown-label{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--amber);
+  }
+
+  .countdown-grid{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+  }
+
+  .countdown-unit{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;
+    padding:10px 14px;
+    min-width:64px;
+    text-align:center;
+    backdrop-filter:blur(8px);
+  }
+
+  .countdown-num{
+    font-family:'Anton', sans-serif;
+    font-size:24px;
+    line-height:1;
+    color:var(--paper);
+  }
+
+  .countdown-lbl{
+    font-size:10px;
+    font-weight:600;
+    text-transform:uppercase;
+    color:#8C8A85;
+    margin-top:4px;
+    letter-spacing:0.04em;
+  }
+
+  .cta-row{
+    margin-top:40px;
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    padding:16px 34px;
+    border-radius:100px;
+    border:none;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+  }
+
+  .btn-primary{
+    background:linear-gradient(120deg, var(--red), var(--tangerine));
+    color:var(--ink);
+  }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--paper);
+    border:1.5px solid rgba(255,255,255,0.3);
+  }
+
+  .free-note{
+    margin-top:18px;
+    font-size:13px;
+    font-weight:600;
+    color:#A6A49E;
+  }
+  .free-note span{ color:var(--grass); }
+
+  /* ---------- ABOUT ---------- */
+
+  .section{ padding:64px 0; border-top:1px solid rgba(255,255,255,0.08); }
+
+  .section-title{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    font-size:clamp(30px,5vw,42px);
+    line-height:1;
+    margin-bottom:18px;
+  }
+
+  .about-text{
+    max-width:64ch;
+    font-size:17px;
+    color:#D8D6D0;
+  }
+
+  .about-text strong{ color:var(--paper); }
+
+  /* ---------- ACTIVITIES ---------- */
+
+  .activities{
+    list-style:none;
+    margin-top:28px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px 28px;
+  }
+
+  .activities li{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    font-size:17px;
+    font-weight:600;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+
+  .activities .dot{ width:10px; height:10px; margin-top:2px; }
+
+  /* ---------- DETAILS STRIP ---------- */
+
+  .details-grid{
+    margin-top:28px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:rgba(255,255,255,0.1);
+    border-radius:16px;
+    overflow:hidden;
+  }
+
+  .detail{
+    background:var(--ink);
+    padding:24px 20px;
+  }
+
+  .detail-label{
+    font-size:12px;
+    font-weight:600;
+    color:#8C8A85;
+    margin-bottom:8px;
+  }
+
+  .detail-value{
+    font-size:18px;
+    font-weight:700;
+    color:var(--paper);
+  }
+
+  /* ---------- FOOTER CTA ---------- */
+
+  .footer{
+    text-align:center;
+    padding:80px 0 60px;
+  }
+
+  .footer .section-title{ margin-bottom:8px; }
+
+  .footer-sub{ color:#A6A49E; font-size:16px; margin-bottom:32px; }
+
+  /* ---------- REGISTRATION FORM ---------- */
+  .register-section{
+    padding:80px 0;
+    border-top:1px solid rgba(255,255,255,0.08);
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,71,87,0.08) 0%, rgba(22,22,26,0) 70%);
+  }
+
+  .form-card{
+    max-width:580px;
+    margin:0 auto;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:24px;
+    padding:40px 32px;
+    box-shadow:0 24px 48px rgba(0,0,0,0.4);
+    backdrop-filter:blur(16px);
+  }
+
+  .form-card .section-title{
+    text-align:center;
+    font-size:clamp(28px, 4vw, 36px);
+    margin-bottom:6px;
+  }
+
+  .form-card .form-subtitle{
+    text-align:center;
+    color:#A6A49E;
+    font-size:15px;
+    margin-bottom:32px;
+  }
+
+  .form-group{
+    margin-bottom:22px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    text-align:left;
+  }
+
+  .form-label{
+    font-size:14px;
+    font-weight:600;
+    color:#D8D6D0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .form-label .optional-tag{
+    font-size:12px;
+    color:#8C8A85;
+    font-weight:400;
+  }
+
+  .form-input, .form-select, .form-textarea{
+    width:100%;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    padding:14px 16px;
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    transition:all 0.2s ease;
+    outline:none;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus{
+    border-color:var(--amber);
+    background:rgba(255,255,255,0.08);
+    box-shadow:0 0 0 3px rgba(255,184,0,0.18);
+  }
+
+  .form-select option{
+    background:#1f1f25;
+    color:var(--paper);
+  }
+
+  .form-textarea{
+    resize:vertical;
+    min-height:90px;
+  }
+
+  .btn-submit{
+    width:100%;
+    margin-top:10px;
+    cursor:pointer;
+    border:none;
+  }
+
+  /* Registration success / digital ticket card */
+  .ticket-preview{
+    display:none;
+    max-width:520px;
+    margin:0 auto;
+    background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+    border:1.5px dashed rgba(255,255,255,0.22);
+    border-radius:24px;
+    padding:36px;
+    position:relative;
+    overflow:hidden;
+    text-align:left;
+  }
+
+  .ticket-preview.active{ display:block; }
+  .ticket-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:100px;
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:14px;
+  }
+
+  .ticket-name{
+    font-family:'Anton', sans-serif;
+    font-size:32px;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+
+  .ticket-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,0.1);
+  }
+
+  @media (max-width:640px){
+    .details-grid{ grid-template-columns:1fr 1fr; }
+    .activities{ grid-template-columns:1fr; }
+    .hero{ padding:56px 0 72px; }
+    .form-card{ padding:28px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+</style>
+
+</head>
+<body>
+
+  <section class="hero">
+    <div class="splash s1"></div>
+    <div class="splash s2"></div>
+    <div class="splash s3"></div>
+    <div class="splash s4"></div>
+    <div class="splash s5"></div>
+
+    <div class="wrap hero-content">
+      <span class="eyebrow">Campus Life · UNN Enugu Campus</span>
+      <h1 class="headline">
+        <span class="c1">Colour</span><br>
+        <span class="c3">Picnic</span>
+      </h1>
+      <p class="sub">A field day for every UNN fresher — register for your faculty colour, come dressed in it, and paint the field.</p>
+
+      <div class="pills">
+        <span class="pill"><span class="dot" style="background:var(--amber)"></span>Saturday, 26 September</span>
+        <span class="pill"><span class="dot" style="background:var(--sky)"></span>2:00 PM</span>
+        <span class="pill"><span class="dot" style="background:var(--grass)"></span>CEDR Field</span>
+      </div>
+
+      <!-- Live Countdown Timer -->
+      <div class="countdown-box" id="countdownBox">
+        <span class="countdown-label">Picnic Starts In</span>
+        <div class="countdown-grid">
+          <div class="countdown-unit">
+            <div class="countdown-num" id="cdDays">--</div>
+            <div class="countdown-lbl">Days</div>
+          </div>
+          <div class="countdown-unit">
+            <div class="countdown-num" id="cdHours">--</div>
+            <div class="countdown-lbl">Hours</div>
+          </div>
+          <div class="countdown-unit">
+            <div class="countdown-num" id="cdMins">--</div>
+            <div class="countdown-lbl">Mins</div>
+          </div>
+          <div class="countdown-unit">
+            <div class="countdown-num" id="cdSecs">--</div>
+            <div class="countdown-lbl">Secs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a href="register.html" class="btn btn-primary">Register now</a>
+        <a href="#details" class="btn btn-ghost">See details</a>
+      </div>
+
+      <p class="free-note"><span>Free entry</span> — registration is compulsory</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="section-title">Get your colour</h2>
+      <p class="about-text">
+        Every UNN fresher gets a faculty colour on registration. <strong>Show up dressed in yours</strong> — the field turns into one big wave of faculty colours, games, and good music. This is your first real UNN memory before lectures even start.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="details">
+    <div class="wrap">
+      <h2 class="section-title">What's happening</h2>
+      <ul class="activities">
+        <li><span class="dot" style="background:var(--red)"></span>Faculty games &amp; tournaments</li>
+        <li><span class="dot" style="background:var(--amber)"></span>Fun games</li>
+        <li><span class="dot" style="background:var(--sky)"></span>Networking</li>
+        <li><span class="dot" style="background:var(--grass)"></span>Food &amp; picnic</li>
+        <li><span class="dot" style="background:var(--violet)"></span>Music &amp; good vibes</li>
+      </ul>
+
+      <div class="details-grid">
+        <div class="detail">
+          <div class="detail-label">Date</div>
+          <div class="detail-value">Sat, 26 Sept</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Time</div>
+          <div class="detail-value">2:00 PM</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Venue</div>
+          <div class="detail-value">CEDR Field</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Who</div>
+          <div class="detail-value">All freshers</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="register">
+    <div class="wrap">
+      <h2 class="section-title">See you on the field</h2>
+      <p class="footer-sub">Entry is free, but registration is compulsory to get your faculty colour.</p>
+      <a href="register.html" class="btn btn-primary">Register now</a>
+    </div>
+  </footer>
+
+  <script>
+    // Automatically keep index.html in sync with event.json
+    (async function loadEventData() {
+      try {
+        const res = await fetch('event.json');
+        if (!res.ok) return;
+        const data = await res.json();
+        const ev = data.event;
+        if (!ev) return;
+
+        // Title
+        if (ev.title) {
+          const parts = ev.title.split(' ');
+          const headline = document.querySelector('.headline');
+          if (headline && parts.length >= 2) {
+            headline.innerHTML = `<span class="c1">${parts[0]}</span><br><span class="c3">${parts.slice(1).join(' ')}</span>`;
+          }
+          document.title = `${ev.title} — UNN Freshers`;
+        }
+
+        // Subtitle & Eyebrow
+        if (ev.subtitle) {
+          const sub = document.querySelector('.sub');
+          if (sub) sub.textContent = ev.subtitle;
+        }
+        if (ev.category || ev.campus) {
+          const eyebrow = document.querySelector('.eyebrow');
+          if (eyebrow) eyebrow.textContent = `${ev.category || ''} · ${ev.campus || ''}`;
+        }
+
+        // Schedule pills & details
+        if (ev.schedule) {
+          const pills = document.querySelectorAll('.pills .pill');
+          if (pills[0] && ev.schedule.date) pills[0].childNodes[1].nodeValue = ev.schedule.date;
+          if (pills[1] && ev.schedule.time) pills[1].childNodes[1].nodeValue = ev.schedule.time;
+          if (pills[2] && ev.schedule.venue) pills[2].childNodes[1].nodeValue = ev.schedule.venue;
+
+          const detailVals = document.querySelectorAll('.detail-value');
+          if (detailVals[0] && ev.schedule.date) {
+            detailVals[0].textContent = ev.schedule.date.replace('Saturday', 'Sat');
+          }
+          if (detailVals[1] && ev.schedule.time) detailVals[1].textContent = ev.schedule.time;
+          if (detailVals[2] && ev.schedule.venue) detailVals[2].textContent = ev.schedule.venue;
+          if (detailVals[3] && ev.audience) detailVals[3].textContent = ev.audience;
+        }
+
+        // Admission notice
+        if (ev.admission && ev.admission.notice) {
+          const freeNote = document.querySelector('.free-note');
+          if (freeNote) {
+            freeNote.innerHTML = `<span>${ev.admission.isFree ? 'Free entry' : ''}</span> — ${ev.admission.notice.replace(/Free entry\s*—?\s*/i, '')}`;
+          }
+        }
+
+        // Description
+        if (ev.description) {
+          const aboutText = document.querySelector('.about-text');
+          if (aboutText) aboutText.innerHTML = ev.description.replace('Show up dressed in yours', '<strong>Show up dressed in yours</strong>');
+        }
+
+        // Activities
+        if (ev.activities && Array.isArray(ev.activities)) {
+          const actList = document.querySelector('.activities');
+          if (actList) {
+            actList.innerHTML = ev.activities.map(a => 
+              `<li><span class="dot" style="background:${a.themeColor}"></span>${a.name}</li>`
+            ).join('');
+          }
+        }
+
+        // CTA
+        if (ev.callToAction) {
+          const footerSub = document.querySelector('.footer-sub');
+          if (footerSub && ev.callToAction.footerNote) footerSub.textContent = ev.callToAction.footerNote;
+        }
+
+        // Palette
+        if (ev.theme && ev.theme.palette) {
+          const root = document.documentElement;
+          Object.entries(ev.theme.palette).forEach(([k, v]) => {
+            root.style.setProperty(`--${k}`, v);
+          });
+        }
+
+        // Live Countdown Logic
+        const targetDate = ev.schedule && ev.schedule.isoTimestamp 
+          ? new Date(ev.schedule.isoTimestamp).getTime() 
+          : new Date('2026-09-26T14:00:00+01:00').getTime();
+
+        const cdDays = document.getElementById('cdDays');
+        const cdHours = document.getElementById('cdHours');
+        const cdMins = document.getElementById('cdMins');
+        const cdSecs = document.getElementById('cdSecs');
+
+        function updateCountdown() {
+          const now = new Date().getTime();
+          const distance = targetDate - now;
+
+          if (distance <= 0) {
+            if (cdDays) cdDays.textContent = '00';
+            if (cdHours) cdHours.textContent = '00';
+            if (cdMins) cdMins.textContent = '00';
+            if (cdSecs) cdSecs.textContent = '00';
+            return;
+          }
+
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          if (cdDays) cdDays.textContent = String(days).padStart(2, '0');
+          if (cdHours) cdHours.textContent = String(hours).padStart(2, '0');
+          if (cdMins) cdMins.textContent = String(minutes).padStart(2, '0');
+          if (cdSecs) cdSecs.textContent = String(seconds).padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+      } catch (err) {
+        console.warn('Live event.json loading fallback to static markup:', err);
+      }
+    })();
+  </script>
+</body>
 </html>
