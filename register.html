@@ -800,9 +800,6 @@
           if (matchedGroup) teamName = `${matchedGroup.colorName} (${matchedGroup.team})`;
         }
 
-        // Webhook URL for Google Sheets + Instant Email Notification
-        const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzCdNW1zYdztB7S4LEz_j2d1He5Dt5RNdmPJ5yLcmFXhXXnY7R_VhBtP-3_8HKGdeWN/exec';
-
         const payload = {
           ticket_id: ticketId,
           full_name: name,
@@ -814,21 +811,7 @@
           assigned_team: teamName
         };
 
-        // 1. Send to Google Sheets + Instant Email notification
-        if (GOOGLE_SHEET_WEBHOOK_URL) {
-          try {
-            fetch(GOOGLE_SHEET_WEBHOOK_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(payload)
-            }).catch(e => console.warn('Sheet sync notice:', e));
-          } catch (sheetErr) {
-            console.warn('Google Sheet webhook error:', sheetErr);
-          }
-        }
-
-        // 2. Insert into Supabase database (for instant CSV export & backup)
+        // Insert into Supabase database (which triggers your Webhook to Make.com)
         if (supabaseClient) {
           try {
             const { data, error } = await supabaseClient
