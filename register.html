@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   :root{
     --ink:#16161A;
@@ -442,33 +443,29 @@
     box-shadow:0 14px 32px rgba(255,184,0,0.55);
   }
 
-  .flyer-download-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  .dl-flyer-btn{
-    display:inline-flex;
+  .btn-save-ticket{
+    display:flex;
     align-items:center;
     justify-content:center;
     gap:8px;
-    padding:12px 16px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.18);
+    width:100%;
+    padding:14px 22px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    font-weight:800;
     border-radius:100px;
-    color:var(--paper);
-    font-size:13px;
-    font-weight:700;
+    border:none;
+    cursor:pointer;
     text-decoration:none;
-    transition:background 0.2s, border-color 0.2s, transform 0.15s;
-    text-align:center;
+    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
   }
-  .dl-flyer-btn:hover{
-    background:rgba(255,255,255,0.12);
-    border-color:var(--amber);
-    transform:translateY(-1px);
-    color:var(--amber);
+  .btn-save-ticket:hover{
+    transform:translateY(-2px);
+    background:#ffffff;
+    box-shadow:0 10px 24px rgba(0,0,0,0.5);
   }
 
   .ticket-success-msg{
@@ -483,96 +480,148 @@
     line-height:1.4;
   }
 
-  /* Faculty Color Groups Section */
-  .color-groups-section{
-    margin-top:40px;
-    padding-top:32px;
-    border-top:1px solid rgba(255,255,255,0.1);
-  }
-
-  .groups-title{
-    font-family:'Anton', sans-serif;
-    font-size:22px;
-    text-transform:uppercase;
-    letter-spacing:0.03em;
-    margin-bottom:6px;
-    color:var(--paper);
-    text-align:center;
-  }
-
-  .groups-sub{
-    font-size:15px;
-    color:#A6A49E;
-    text-align:center;
-    margin-bottom:20px;
-  }
-
-  .groups-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-  }
-
-  .color-group-card{
+  /* Individual Assigned Faculty Colour Notification */
+  .user-color-card{
+    margin-top:28px;
+    padding:24px 20px;
+    border-radius:18px;
     background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,255,255,0.08);
-    border-radius:16px;
-    padding:16px;
-    transition:transform 0.2s, border-color 0.2s;
+    border:1.5px solid var(--amber);
+    text-align:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    transition:border-color 0.25s ease;
   }
 
-  .color-group-card.user-team{
-    border:2px solid var(--amber);
-    background:rgba(255,184,0,0.08);
-    box-shadow:0 0 20px rgba(255,184,0,0.15);
-  }
-
-  .group-header{
-    display:flex;
-    align-items:center;
-    gap:10px;
+  .ucc-badge{
+    display:inline-block;
+    padding:4px 14px;
+    border-radius:100px;
+    background:rgba(255,184,0,0.14);
+    border:1px solid rgba(255,184,0,0.35);
+    color:var(--amber);
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
     margin-bottom:10px;
   }
 
-  .group-dot{
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    flex-shrink:0;
+  .ucc-team{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(22px, 5vw, 30px);
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    margin-bottom:8px;
+    line-height:1.2;
   }
 
-  .group-name{
-    font-weight:700;
-    font-size:14px;
-    color:var(--paper);
+  .ucc-desc{
+    font-size:15px;
+    color:#D8D6D0;
+    line-height:1.5;
+    max-width:54ch;
+    margin:0 auto;
   }
 
-  .group-tag{
-    font-size:11px;
-    font-weight:600;
-    color:#A6A49E;
-    margin-left:auto;
-  }
-
-  .group-faculties{
-    list-style:none;
-    padding:0;
-    margin:0;
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-  }
-
-  .group-faculties li{
-    font-size:12px;
-    color:#C5C3BC;
+  /* Ticket Save Pop-Up Modal */
+  .ticket-modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(8px);
     display:flex;
     align-items:center;
-    gap:6px;
+    justify-content:center;
+    padding:20px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
   }
-  .group-faculties li::before{
-    content:"•";
-    color:#8C8A85;
+  .ticket-modal-overlay.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .ticket-modal{
+    background:linear-gradient(145deg, #222228, #16161A);
+    border:1.5px solid rgba(255,184,0,0.4);
+    border-radius:24px;
+    padding:32px 24px;
+    max-width:440px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 30px rgba(255,184,0,0.15);
+    transform:scale(0.92);
+    transition:transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .ticket-modal-overlay.active .ticket-modal{
+    transform:scale(1);
+  }
+
+  .ticket-modal-icon{
+    font-size:44px;
+    margin-bottom:12px;
+    line-height:1;
+  }
+
+  .ticket-modal-title{
+    font-family:'Anton', sans-serif;
+    font-size:24px;
+    text-transform:uppercase;
+    color:var(--paper);
+    margin-bottom:8px;
+    letter-spacing:0.02em;
+  }
+
+  .ticket-modal-desc{
+    font-size:14.5px;
+    color:#D8D6D0;
+    line-height:1.5;
+    margin-bottom:22px;
+  }
+
+  .ticket-modal-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .btn-modal-download{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:14px 20px;
+    background:linear-gradient(135deg, #FFB800, #FF8C42);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    font-weight:800;
+    border-radius:100px;
+    border:none;
+    cursor:pointer;
+    transition:transform 0.15s, box-shadow 0.15s;
+    box-shadow:0 6px 20px rgba(255,184,0,0.35);
+  }
+  .btn-modal-download:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 26px rgba(255,184,0,0.5);
+  }
+
+  .btn-modal-dismiss{
+    background:none;
+    border:none;
+    color:#A6A49E;
+    font-size:14px;
+    font-weight:600;
+    padding:8px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .btn-modal-dismiss:hover{
+    color:var(--paper);
   }
 
   .btn-return{
@@ -588,7 +637,6 @@
   .btn-return:hover{ color:var(--paper); }
 
   @media (max-width:600px){
-    .groups-grid{ grid-template-columns:1fr; }
     .form-card{ padding:32px 20px; }
     .eticket{
       grid-template-columns:110px 1fr 58px;
@@ -745,41 +793,53 @@
       <!-- /E-TICKET -->
 
       <div class="ticket-success-msg">
-        🎉 Pass Confirmed! Screenshot or save your e-ticket and present it at CEDR Field (Saturday) &amp; PAA (Sunday) to claim your food and entry.
+        🎉 Pass Confirmed! Save your e-ticket image or screenshot it to present at CEDR Field (Saturday) &amp; PAA (Sunday) for entry and free food.
       </div>
 
-      <!-- Action Buttons: WhatsApp Share, Community & Flyer Downloads -->
+      <!-- Action Buttons -->
       <div class="ticket-actions">
-        <a href="https://api.whatsapp.com/send?text=I%20just%20registered%20for%20Freshers'%20Xperience%20FX26%20%26%20Colour%20Picnic%20at%20UNN!%20%F0%9F%8E%9F%EF%B8%8F%20Entry%20is%20100%25%20FREE%20with%20food%2C%20scholarship%2C%20giveaways%20%26%20prizes.%20Register%20to%20secure%20your%20food%3A%20https%3A%2F%2Fbit.ly%2F4xpouzw" target="_blank" rel="noopener noreferrer" class="wa-share-btn" id="waShareBtn">
-          <span>📢</span> Share on WhatsApp Status (Invite Friends)
-        </a>
+        <button type="button" class="btn-save-ticket" id="saveTicketBtn" onclick="downloadTicketImage()">
+          <span>📥</span> Save Ticket as Image
+        </button>
+
+        <button type="button" class="wa-share-btn" id="waShareBtn">
+          <span>📢</span> Share Ticket on WhatsApp Status
+        </button>
 
         <a href="https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs" target="_blank" rel="noopener noreferrer" class="wa-btn">
           <span>💬</span> Join Official Freshers WhatsApp Community
         </a>
-
-        <div class="flyer-download-grid">
-          <a href="assets/FRESHERS EXPERIENCE.png" download="Freshers_Xperience_FX26_Flyer.png" class="dl-flyer-btn">
-            <span>📥</span> FX26 Sunday Flyer
-          </a>
-          <a href="assets/Freshers Colour Picnic Design.png" download="Colour_Picnic_Saturday_Flyer.png" class="dl-flyer-btn">
-            <span>📥</span> Picnic Saturday Flyer
-          </a>
-        </div>
       </div>
 
-      <!-- UNN Faculty Colour Groupings Breakdown -->
-      <div class="color-groups-section">
-        <h3 class="groups-title">UNN Faculty Colour Teams</h3>
-        <p class="groups-sub">Find your faculty allies and know who you're competing with:</p>
-        <div class="groups-grid" id="facultyGroupsContainer">
-          <!-- Populated dynamically from event.json -->
-        </div>
+      <!-- Individual Assigned Faculty Colour Notification -->
+      <div class="user-color-card" id="userColorCard">
+        <div class="ucc-badge">Your Official Picnic Colour</div>
+        <div class="ucc-team" id="uccTeamName">Team Name</div>
+        <p class="ucc-desc" id="uccDesc">
+          Wear your faculty colour to CEDR Field this Saturday, 26 September at 12:00 PM for the Colour Picnic!
+        </p>
       </div>
 
       <a href="index.html" class="btn-return">← Back to Event Homepage</a>
     </div>
 
+  </div>
+
+  <!-- Pop-Up Modal to Save Ticket as Image -->
+  <div class="ticket-modal-overlay" id="ticketModalOverlay" onclick="if(event.target===this)closeTicketModal()">
+    <div class="ticket-modal">
+      <div class="ticket-modal-icon">🎟️</div>
+      <h3 class="ticket-modal-title">Save Your Ticket Image</h3>
+      <p class="ticket-modal-desc">Your pass is confirmed! Save the ticket image to your phone now so you can present it at the gate to claim your food.</p>
+      <div class="ticket-modal-actions">
+        <button type="button" class="btn-modal-download" id="modalDownloadBtn" onclick="downloadTicketImage()">
+          <span>📥</span> Save Ticket Image Now
+        </button>
+        <button type="button" class="btn-modal-dismiss" id="modalDismissBtn" onclick="closeTicketModal()">
+          I'll Save It Later
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -928,12 +988,37 @@
         if (tkDate) tkDate.textContent = 'Sat 26 Sept 12PM & Sun 27 Sept 3PM';
         if (tkColourVenue) tkColourVenue.textContent = 'CEDR Field (Sat) & PAA (Sun)';
 
-        // Wire WhatsApp Status share button
-        const shareBtn = document.getElementById('waShareBtn');
-        if (shareBtn) {
-          const shareMsg = `I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw`;
-          shareBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
+        // Populate individual user colour notification
+        let matchedColorName = 'Your Team Colour';
+        let matchedTeamName = teamName;
+        let matchedHex = color;
+        if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
+          const matchedGroup = globalEventData.facultyColorGroups.find(g => 
+            g.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase())
+          );
+          if (matchedGroup) {
+            matchedColorName = matchedGroup.colorName;
+            matchedTeamName = `${matchedGroup.team} (${matchedGroup.colorName})`;
+            matchedHex = matchedGroup.hex || color;
+          }
         }
+
+        const uccTeamEl = document.getElementById('uccTeamName');
+        const uccDescEl = document.getElementById('uccDesc');
+        const uccCardEl = document.getElementById('userColorCard');
+        if (uccTeamEl) {
+          uccTeamEl.textContent = matchedTeamName;
+          uccTeamEl.style.color = matchedHex;
+        }
+        if (uccCardEl) {
+          uccCardEl.style.borderColor = matchedHex;
+        }
+        if (uccDescEl) {
+          uccDescEl.innerHTML = `Your faculty (<strong style="color:var(--paper);">${selectedFacultyText.replace('Faculty of ', '')}</strong>) is repping <strong style="color:${matchedHex};">${matchedColorName}</strong>! Wear your team colour to CEDR Field this Saturday, 26 September at 12:00 PM for the Colour Picnic.`;
+        }
+
+        // Store ticketId globally for image generation
+        window.currentTicketId = ticketId;
 
         // Generate dynamic barcode pattern in stub
         function renderBarcode(containerId) {
@@ -950,71 +1035,127 @@
         renderBarcode('tkBarcode1');
         renderBarcode('tkBarcode2');
 
-        // Render faculty color groups breakdown
-        const groupsContainer = document.getElementById('facultyGroupsContainer');
-        const colorGroups = (globalEventData && globalEventData.facultyColorGroups) ? globalEventData.facultyColorGroups : [
-          {
-            colorName: "Red",
-            hex: "#FF4757",
-            team: "Team Blaze",
-            faculties: ["Faculty of Engineering", "Faculty of Medical Sciences", "Faculty of Basic Medical Sciences"]
-          },
-          {
-            colorName: "Sky Blue",
-            hex: "#2E9CFF",
-            team: "Team Waves",
-            faculties: ["Faculty of Biological Sciences", "Faculty of Physical Sciences", "Faculty of Health Sciences & Technology"]
-          },
-          {
-            colorName: "Grass Green",
-            hex: "#3FD68A",
-            team: "Team Flora",
-            faculties: ["Faculty of Agriculture", "Faculty of Pharmaceutical Sciences", "Faculty of Veterinary Medicine", "Faculty of Environmental Studies"]
-          },
-          {
-            colorName: "Amber Yellow",
-            hex: "#FFB800",
-            team: "Team Glow",
-            faculties: ["Faculty of Arts", "Faculty of Education", "Faculty of Vocational & Technical Education"]
-          },
-          {
-            colorName: "Royal Violet",
-            hex: "#A66BFF",
-            team: "Team Royals",
-            faculties: ["Faculty of Law", "Faculty of Dentistry"]
-          },
-          {
-            colorName: "Tangerine Orange",
-            hex: "#FF8C42",
-            team: "Team Titans",
-            faculties: ["Faculty of Business Administration", "Faculty of Social Sciences"]
-          }
-        ];
-
-        if (groupsContainer) {
-          groupsContainer.innerHTML = colorGroups.map(group => {
-            const isUserTeam = group.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase());
-            return `
-              <div class="color-group-card ${isUserTeam ? 'user-team' : ''}">
-                <div class="group-header">
-                  <span class="group-dot" style="background:${group.hex}"></span>
-                  <span class="group-name" style="color:${group.hex}">${group.team} (${group.colorName})</span>
-                  ${isUserTeam ? '<span class="group-tag" style="color:var(--amber)">★ YOUR TEAM</span>' : ''}
-                </div>
-                <ul class="group-faculties">
-                  ${group.faculties.map(fac => `<li style="${fac.toLowerCase() === selectedFacultyText.toLowerCase() ? 'font-weight:700; color:var(--paper);' : ''}">${fac}</li>`).join('')}
-                </ul>
-              </div>
-            `;
-          }).join('');
-        }
+        // Wire WhatsApp Share with image & caption
+        wireWhatsAppShare(ticketId);
 
         // Swap view
         document.getElementById('formContainer').style.display = 'none';
         const ticketCard = document.getElementById('ticketCard');
         ticketCard.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Trigger Pop-Up to save ticket as image
+        setTimeout(() => {
+          openTicketModal();
+        }, 600);
       });
+    }
+
+    // Ticket Modal Controls
+    function openTicketModal() {
+      const modal = document.getElementById('ticketModalOverlay');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeTicketModal() {
+      const modal = document.getElementById('ticketModalOverlay');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Render Ticket Element to High-Res Canvas
+    async function renderTicketCanvas() {
+      const ticketEl = document.getElementById('eticket');
+      if (!ticketEl) return null;
+
+      // Use html2canvas to capture the e-ticket
+      if (typeof html2canvas === 'undefined') {
+        throw new Error('html2canvas library is not loaded');
+      }
+
+      return await html2canvas(ticketEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#16161A',
+        logging: false
+      });
+    }
+
+    // Download Ticket as Image
+    async function downloadTicketImage() {
+      const downloadBtn = document.getElementById('saveTicketBtn');
+      const modalBtn = document.getElementById('modalDownloadBtn');
+      if (downloadBtn) downloadBtn.innerHTML = '<span>⏳</span> Generating Image...';
+      if (modalBtn) modalBtn.innerHTML = '<span>⏳</span> Generating Image...';
+
+      try {
+        const canvas = await renderTicketCanvas();
+        if (!canvas) throw new Error('Canvas render failed');
+
+        const imageUri = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = imageUri;
+        a.download = `UNN_FX26_Pass_${window.currentTicketId || 'Ticket'}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        closeTicketModal();
+      } catch (err) {
+        console.error('Image generation error:', err);
+        alert('Could not auto-generate image. Please take a screenshot of your ticket above!');
+      } finally {
+        if (downloadBtn) downloadBtn.innerHTML = '<span>📥</span> Save Ticket as Image';
+        if (modalBtn) modalBtn.innerHTML = '<span>📥</span> Save Ticket Image Now';
+      }
+    }
+
+    // Share Ticket with Image and Caption on WhatsApp Status
+    function wireWhatsAppShare(ticketId) {
+      const shareBtn = document.getElementById('waShareBtn');
+      if (!shareBtn) return;
+
+      shareBtn.onclick = async function (e) {
+        e.preventDefault();
+        const originalHtml = shareBtn.innerHTML;
+        shareBtn.innerHTML = '<span>⏳</span> Preparing Ticket Image...';
+
+        const shareMsg = `I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw`;
+
+        try {
+          const canvas = await renderTicketCanvas();
+          if (!canvas) throw new Error('Canvas render failed');
+
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          const file = new File([blob], `UNN_FX26_Pass_${ticketId}.png`, { type: 'image/png' });
+
+          // Modern Mobile Web Share API: shares image + caption directly into WhatsApp
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              text: shareMsg,
+              title: 'Freshers\' Xperience FX26 Ticket'
+            });
+          } else {
+            // Fallback: trigger download and open WhatsApp with caption
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `UNN_FX26_Pass_${ticketId}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
+            window.open(waUrl, '_blank');
+            alert('Your ticket image has been downloaded! You can now attach it directly to your WhatsApp status.');
+          }
+        } catch (err) {
+          console.warn('Share issue fallback:', err);
+          const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
+          window.open(waUrl, '_blank');
+        } finally {
+          shareBtn.innerHTML = originalHtml;
+        }
+      };
     }
   </script>
 </body>
