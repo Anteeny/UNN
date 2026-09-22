@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register — Colour Picnic | UNN Freshers</title>
+<title>Register to Secure Your Food — Freshers' Xperience FX26 & Colour Picnic | UNN</title>
+<meta name="description" content="Register for Freshers' Xperience FX26 & Colour Picnic at UNN! Sat 26 Sept 12PM at CEDR Field & Sun 27 Sept 3PM at PAA. Free food, scholarship, giveaways & prizes.">
+<meta property="og:title" content="Register to Secure Your Food — Freshers' Xperience FX26 & Colour Picnic">
+<meta property="og:description" content="2-Day Freshers' Xperience: Saturday Colour Picnic (CEDR Field, 12PM) & Sunday FX26 (PAA, 3PM). Register to secure your food!">
+<meta property="og:image" content="assets/FRESHERS EXPERIENCE.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="assets/FRESHERS EXPERIENCE.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +24,7 @@
     --grass:#3FD68A;
     --violet:#A66BFF;
     --tangerine:#FF8C42;
-    --max:620px;
+    --max:640px;
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -35,6 +41,11 @@
     align-items:center;
     position:relative;
     overflow-x:hidden;
+  }
+
+  p{
+    font-size:17px;
+    line-height:1.6;
   }
 
   /* Decorative backdrop glows */
@@ -109,7 +120,7 @@
 
   .form-subtitle{
     color:#A6A49E;
-    font-size:15px;
+    font-size:17px;
     margin-bottom:32px;
   }
 
@@ -394,7 +405,7 @@
     align-items:center;
     justify-content:center;
     gap:10px;
-    padding:16px 28px;
+    padding:16px 24px;
     background:#25D366;
     color:#FFFFFF;
     font-family:'Work Sans', sans-serif;
@@ -410,6 +421,56 @@
     box-shadow:0 14px 32px rgba(37,211,102,0.5);
   }
 
+  .wa-share-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:16px 24px;
+    background:linear-gradient(135deg, #FFB800, #FF8C42);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    font-weight:800;
+    border-radius:100px;
+    text-decoration:none;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:0 8px 24px rgba(255,184,0,0.35);
+  }
+  .wa-share-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(255,184,0,0.55);
+  }
+
+  .flyer-download-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .dl-flyer-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 16px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:100px;
+    color:var(--paper);
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+    transition:background 0.2s, border-color 0.2s, transform 0.15s;
+    text-align:center;
+  }
+  .dl-flyer-btn:hover{
+    background:rgba(255,255,255,0.12);
+    border-color:var(--amber);
+    transform:translateY(-1px);
+    color:var(--amber);
+  }
+
   .ticket-success-msg{
     text-align:center;
     padding:16px;
@@ -419,6 +480,7 @@
     color:var(--grass);
     font-size:14px;
     font-weight:600;
+    line-height:1.4;
   }
 
   /* Faculty Color Groups Section */
@@ -439,7 +501,7 @@
   }
 
   .groups-sub{
-    font-size:13px;
+    font-size:15px;
     color:#A6A49E;
     text-align:center;
     margin-bottom:20px;
@@ -570,8 +632,8 @@
 
     <!-- Registration Form -->
     <div class="form-card" id="formContainer">
-      <h1 class="headline">Register for <span>Colour Picnic</span></h1>
-      <p class="form-subtitle">Fill in your details to get your official faculty colour and reserve your free spot.</p>
+      <h1 class="headline">Register for <span>Freshers' Xperience &amp; Colour Picnic</span></h1>
+      <p class="form-subtitle">Get your official faculty colour for Saturday's picnic &amp; secure your food for Sunday's main event at PAA.</p>
 
       <form id="picnicRegistrationForm">
         <div class="form-group">
@@ -618,10 +680,10 @@
             <span>What are you looking forward to?</span>
             <span class="optional-tag">Optional</span>
           </label>
-          <textarea id="lookingForwardTo" class="form-textarea" placeholder="Games, networking, good music, food..."></textarea>
+          <textarea id="lookingForwardTo" class="form-textarea" placeholder="Free food, giveaways, prizes, presentations, networking..."></textarea>
         </div>
 
-        <button type="submit" class="btn-submit">Claim My Faculty Colour</button>
+        <button type="submit" class="btn-submit">Register to Secure Your Food</button>
       </form>
     </div>
 
@@ -631,30 +693,30 @@
       <!-- ===== E-TICKET (Matches exact reference design) ===== -->
       <div class="eticket" id="eticket">
 
-        <!-- LEFT: Aerial Picnic Photo -->
+        <!-- LEFT: Event Photo from Flyer -->
         <div class="et-photo">
-          <img src="picnic 1.jpg" alt="UNN Freshers Colour Picnic">
+          <img src="assets/FRESHERS EXPERIENCE.png" alt="Freshers' Xperience FX26">
         </div>
 
         <!-- MIDDLE: Event Info Grid -->
         <div class="et-info">
-          <div class="et-event-name">UNN FRESHERS<br>COLOUR PICNIC 2026</div>
+          <div class="et-event-name">NCF UNN FRESHERS'<br>XPERIENCE &amp; PICNIC</div>
           <div class="et-grid">
             <div class="et-cell">
-              <span class="et-cell-lbl">DATE</span>
-              <span class="et-cell-val" id="tkDate">Saturday, 26 September 2026</span>
+              <span class="et-cell-lbl">PASS / DATES</span>
+              <span class="et-cell-val" id="tkDate">Sat 26 Sept 12PM &amp; Sun 27 Sept 3PM</span>
             </div>
             <div class="et-cell">
               <span class="et-cell-lbl">ATTENDEE</span>
               <span class="et-cell-val" id="tkAttendee">Student Name</span>
             </div>
             <div class="et-cell">
-              <span class="et-cell-lbl">FACULTY</span>
+              <span class="et-cell-lbl">FACULTY &amp; COLOUR</span>
               <span class="et-cell-val" id="tkFaculty">Faculty</span>
             </div>
             <div class="et-cell">
-              <span class="et-cell-lbl">COLOUR / VENUE</span>
-              <span class="et-cell-val" id="tkColourVenue">Team | CEDR Field</span>
+              <span class="et-cell-lbl">VENUES</span>
+              <span class="et-cell-val" id="tkColourVenue">CEDR Field &amp; PAA, UNN</span>
             </div>
           </div>
         </div>
@@ -666,7 +728,7 @@
 
           <!-- Rotated Ticket Number -->
           <div class="et-stub-text">
-            TICKET NO:&nbsp;<span class="stub-id" id="tkTicketNo">UCP-YJZM8A</span>
+            TICKET NO:&nbsp;<span class="stub-id" id="tkTicketNo">FX26-YJZM8A</span>
           </div>
 
           <!-- Row / Seat Checkboxes -->
@@ -683,14 +745,27 @@
       <!-- /E-TICKET -->
 
       <div class="ticket-success-msg">
-        ✓ Pass Confirmed! Screenshot or save your e-ticket and show it at the CEDR Field entrance.
+        🎉 Pass Confirmed! Screenshot or save your e-ticket and present it at CEDR Field (Saturday) &amp; PAA (Sunday) to claim your food and entry.
       </div>
 
-      <!-- Action Buttons: WhatsApp Community -->
+      <!-- Action Buttons: WhatsApp Share, Community & Flyer Downloads -->
       <div class="ticket-actions">
+        <a href="https://api.whatsapp.com/send?text=I%20just%20registered%20for%20Freshers'%20Xperience%20FX26%20%26%20Colour%20Picnic%20at%20UNN!%20%F0%9F%8E%9F%EF%B8%8F%20Entry%20is%20100%25%20FREE%20with%20food%2C%20scholarship%2C%20giveaways%20%26%20prizes.%20Register%20to%20secure%20your%20food%3A%20https%3A%2F%2Fbit.ly%2F4xpouzw" target="_blank" rel="noopener noreferrer" class="wa-share-btn" id="waShareBtn">
+          <span>📢</span> Share on WhatsApp Status (Invite Friends)
+        </a>
+
         <a href="https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs" target="_blank" rel="noopener noreferrer" class="wa-btn">
           <span>💬</span> Join Official Freshers WhatsApp Community
         </a>
+
+        <div class="flyer-download-grid">
+          <a href="assets/FRESHERS EXPERIENCE.png" download="Freshers_Xperience_FX26_Flyer.png" class="dl-flyer-btn">
+            <span>📥</span> FX26 Sunday Flyer
+          </a>
+          <a href="assets/Freshers Colour Picnic Design.png" download="Colour_Picnic_Saturday_Flyer.png" class="dl-flyer-btn">
+            <span>📥</span> Picnic Saturday Flyer
+          </a>
+        </div>
       </div>
 
       <!-- UNN Faculty Colour Groupings Breakdown -->
@@ -743,7 +818,7 @@
           const scheduleEl = document.getElementById('ticketSchedule');
           const venueEl = document.getElementById('ticketVenue');
           if (scheduleEl && ev.schedule.date && ev.schedule.time) {
-            scheduleEl.textContent = `${ev.schedule.date.replace('Saturday', 'Sat')} · ${ev.schedule.time}`;
+            scheduleEl.textContent = `${ev.schedule.date.replace('Sunday', 'Sun').replace('Saturday', 'Sat')} · ${ev.schedule.time}`;
           }
           if (venueEl && ev.schedule.venue) {
             venueEl.textContent = ev.schedule.venue;
@@ -768,10 +843,10 @@
         e.preventDefault();
 
         const submitBtn = regForm.querySelector('.btn-submit');
-        const originalBtnText = submitBtn ? submitBtn.textContent : 'Claim My Faculty Colour';
+        const originalBtnText = submitBtn ? submitBtn.textContent : 'Register to Secure Your Food';
         if (submitBtn) {
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Generating Ticket & Registering...';
+          submitBtn.textContent = 'Securing Your Food & Generating Pass...';
         }
 
         const name = document.getElementById('fullName').value.trim();
@@ -790,13 +865,13 @@
         const dept = document.getElementById('department').value.trim();
         const looking = (document.getElementById('lookingForwardTo')?.value || '').trim();
 
-        // Generate unique ticket number like UCP-YJZM8A
+        // Generate unique ticket number like FX26-YJZM8A
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let randomCode = '';
         for (let i = 0; i < 6; i++) {
           randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        const ticketId = `UCP-${randomCode}`;
+        const ticketId = `FX26-${randomCode}`;
 
         // Find color team name
         let teamName = 'Allies';
@@ -843,13 +918,17 @@
         const tkTicketNo = document.getElementById('tkTicketNo');
 
         if (tkAttendee) tkAttendee.textContent = name;
-        if (tkFaculty) tkFaculty.textContent = selectedFacultyText.replace('Faculty of ', '');
+        if (tkFaculty) tkFaculty.textContent = `${selectedFacultyText.replace('Faculty of ', '')} · ${teamName}`;
         if (tkTicketNo) tkTicketNo.textContent = ticketId;
+        if (tkDate) tkDate.textContent = 'Sat 26 Sept 12PM & Sun 27 Sept 3PM';
+        if (tkColourVenue) tkColourVenue.textContent = 'CEDR Field (Sat) & PAA (Sun)';
 
-        if (globalEventData && globalEventData.schedule) {
-          if (tkDate) tkDate.textContent = `${globalEventData.schedule.date} 2026`;
+        // Wire WhatsApp Status share button
+        const shareBtn = document.getElementById('waShareBtn');
+        if (shareBtn) {
+          const shareMsg = `I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw`;
+          shareBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
         }
-        if (tkColourVenue) tkColourVenue.textContent = `${teamName} | CEDR Field`;
 
         // Generate dynamic barcode pattern in stub
         function renderBarcode(containerId) {

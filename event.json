@@ -1,57 +1,82 @@
 {
   "event": {
-    "title": "Colour Picnic",
-    "subtitle": "A field day for every UNN fresher — register for your faculty colour, come dressed in it, and paint the field.",
-    "category": "Campus Life",
-    "campus": "UNN Enugu Campus",
-    "audience": "All freshers",
+    "title": "Freshers' Xperience & Colour Picnic",
+    "subtitle": "The Ultimate 2-Day Welcome for Every UNN Fresher",
+    "organization": "NCF UNN",
+    "category": "NCF UNN",
+    "campus": "University of Nigeria, Nsukka",
+    "audience": "All UNN Freshers",
+    "guestSpeaker": {
+      "name": "Pastor Ifeanyi Okeke",
+      "role": "Guest Speaker"
+    },
+    "enquiries": "0906 853 1185, 0916 418 4246",
+    "shortLink": "bit.ly/4xpouzw",
     "admission": {
       "isFree": true,
-      "notice": "Free entry — registration is compulsory"
+      "notice": "Attendance Is FREE, But Registration Is Compulsory."
+    },
+    "flyers": {
+      "picnic": "assets/Freshers Colour Picnic Design.png",
+      "mainEvent": "assets/FRESHERS EXPERIENCE.png"
     },
     "schedule": {
-      "date": "Saturday, 26 September",
-      "time": "2:00 PM",
-      "venue": "CEDR Field",
-      "isoTimestamp": "2026-09-26T14:00:00+01:00",
+      "date": "26th - 27th September 2026",
+      "time": "Sat 12PM · Sun 3PM",
+      "venue": "CEDR Field & PAA, UNN",
+      "isoTimestamp": "2026-09-26T12:00:00+01:00",
+      "picnic": {
+        "title": "Colour Picnic",
+        "date": "Saturday, 26th September 2026",
+        "time": "12:00 PM",
+        "venue": "CEDR Field",
+        "instruction": "Register to receive your faculty colour and come dressed in it!"
+      },
+      "mainEvent": {
+        "title": "Freshers' Xperience FX26",
+        "date": "Sunday, 27th September 2026",
+        "time": "3:00 PM",
+        "venue": "Princess Alexandra Auditorium (PAA), UNN",
+        "guestSpeaker": "Pastor Ifeanyi Okeke"
+      },
       "countdown": {
         "enabled": true,
-        "label": "Countdown to Colour Picnic"
+        "label": "Countdown to Freshers' Xperience"
       }
     },
-    "description": "Every UNN fresher gets a faculty colour on registration. Show up dressed in yours — the field turns into one big wave of faculty colours, games, and good music. This is your first real UNN memory before lectures even start.",
+    "description": "NCF UNN presents the biggest 2-day welcome event for every newcomer at the University of Nigeria, Nsukka! Kick off on Saturday with the Colour Picnic at CEDR Field dressed in your faculty colour, then gather on Sunday at the iconic Princess Alexandra Auditorium (PAA) for Freshers' Xperience FX26 featuring guest speaker Pastor Ifeanyi Okeke, free food, scholarship & giveaways, presentations, and lots of prizes to be won.",
     "activities": [
       {
-        "name": "Faculty games & tournaments",
+        "name": "Free Food",
         "themeColor": "#FF4757"
       },
       {
-        "name": "Fun games",
+        "name": "Scholarship & Giveaways",
         "themeColor": "#FFB800"
       },
       {
-        "name": "Networking",
+        "name": "Presentations",
         "themeColor": "#2E9CFF"
       },
       {
-        "name": "Food & picnic",
+        "name": "Lots Of Prizes To Be Won",
         "themeColor": "#3FD68A"
       },
       {
-        "name": "Music & good vibes",
+        "name": "And Other Fun Activities",
         "themeColor": "#A66BFF"
       }
     ],
     "callToAction": {
-      "registerText": "Register now",
+      "registerText": "Register to Secure Your Food",
       "registerUrl": "register.html",
-      "detailsText": "See details",
+      "detailsText": "See Details",
       "detailsUrl": "#details",
-      "footerNote": "Entry is free, but registration is compulsory to get your faculty colour."
+      "footerNote": "Attendance Is FREE, But Registration Is Compulsory."
     },
     "registrationForm": {
-      "title": "Register for Colour Picnic",
-      "subtitle": "Get your official faculty colour and reserve your free spot.",
+      "title": "Register for Freshers' Xperience & Colour Picnic",
+      "subtitle": "Get your official faculty colour for Saturday's picnic & secure your food for Sunday's main event at PAA.",
       "fields": [
         {
           "name": "fullName",
@@ -103,38 +128,39 @@
           "name": "lookingForwardTo",
           "label": "What are you looking forward to?",
           "type": "textarea",
-          "placeholder": "Games, networking, good music, food... (optional)",
+          "placeholder": "Free food, games, faculty colours, scholarship & giveaways... (optional)",
           "required": false
         }
       ],
-      "submitButtonText": "Claim My Faculty Colour",
+      "submitButtonText": "Register to Secure Your Food",
       "postSubmission": {
         "ticket": {
           "design": "horizontal-stub",
-          "title": "UNN FRESHERS COLOUR PICNIC 2026",
-          "photo": "picnic 1.jpg",
+          "title": "NCF UNN · FRESHERS' XPERIENCE FX26",
+          "photo": "assets/FRESHERS EXPERIENCE.png",
           "fields": [
-            { "label": "DATE", "key": "date", "default": "Saturday, 26 September 2026" },
+            { "label": "WEEKEND PASS", "key": "date", "default": "Sat 26th Sept 12PM & Sun 27th Sept 3PM" },
             { "label": "ATTENDEE", "key": "fullName" },
-            { "label": "FACULTY", "key": "faculty" },
-            { "label": "COLOUR / VENUE", "key": "colourVenue", "default": "CEDR Field" }
+            { "label": "FACULTY / COLOUR", "key": "faculty" },
+            { "label": "VENUES", "key": "colourVenue", "default": "CEDR Field & PAA, UNN" }
           ],
           "stub": {
             "color": "#FDB913",
-            "prefix": "UCP-",
+            "prefix": "FX26-",
             "labels": ["Row", "Seat", "Ticket No"]
           }
         },
         "community": {
           "platform": "WhatsApp",
-          "title": "Join the Official UNN Freshers WhatsApp Community",
-          "description": "Connect with fellow freshers, get updates on team games, colours, and picnic arrivals.",
+          "title": "Join the Official Freshers WhatsApp Community",
+          "description": "Connect with fellow freshers, get event schedule updates, faculty colours, and entry announcements.",
           "buttonText": "Join WhatsApp Community",
           "url": "https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs"
         },
+        "shareMessage": "I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw",
         "colorTeamsRoster": {
           "title": "UNN Faculty Colour Teams",
-          "subtitle": "Find your faculty allies and know who you're competing with:",
+          "subtitle": "Find your faculty colour for Saturday's Colour Picnic & rep your team:",
           "highlightUserTeam": true
         }
       }
