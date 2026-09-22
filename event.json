@@ -67,6 +67,11 @@
         "themeColor": "#A66BFF"
       }
     ],
+    "scholarship": {
+      "title": "Need Help With School Fees?",
+      "description": "If you are a student who genuinely needs financial assistance for tuition and school fees, fill out the application form so our team can review your request.",
+      "applicationFormUrl": "https://forms.gle/N1L83VbDMPK7Y1sY6"
+    },
     "callToAction": {
       "registerText": "Register to Secure Your Food",
       "registerUrl": "register.html",
@@ -132,7 +137,7 @@
           "required": false
         }
       ],
-      "submitButtonText": "Register to Secure Your Food",
+      "submitButtonText": "Submit now",
       "postSubmission": {
         "ticket": {
           "design": "horizontal-stub",

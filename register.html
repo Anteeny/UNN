@@ -683,7 +683,7 @@
           <textarea id="lookingForwardTo" class="form-textarea" placeholder="Free food, giveaways, prizes, presentations, networking..."></textarea>
         </div>
 
-        <button type="submit" class="btn-submit">Register to Secure Your Food</button>
+        <button type="submit" class="btn-submit">Submit now</button>
       </form>
     </div>
 
@@ -814,6 +814,11 @@
           }
         }
 
+        if (ev.registrationForm && ev.registrationForm.submitButtonText) {
+          const sBtn = document.querySelector('.btn-submit');
+          if (sBtn) sBtn.textContent = ev.registrationForm.submitButtonText;
+        }
+
         if (ev.schedule) {
           const scheduleEl = document.getElementById('ticketSchedule');
           const venueEl = document.getElementById('ticketVenue');
@@ -843,10 +848,10 @@
         e.preventDefault();
 
         const submitBtn = regForm.querySelector('.btn-submit');
-        const originalBtnText = submitBtn ? submitBtn.textContent : 'Register to Secure Your Food';
+        const originalBtnText = submitBtn ? submitBtn.textContent : 'Submit now';
         if (submitBtn) {
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Securing Your Food & Generating Pass...';
+          submitBtn.textContent = 'Submitting & Generating Pass...';
         }
 
         const name = document.getElementById('fullName').value.trim();
