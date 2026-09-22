@@ -523,12 +523,12 @@
     margin:0 auto;
   }
 
-  /* Ticket Save Pop-Up Modal */
+  /* Clean Ticket Image Pop-Up */
   .ticket-modal-overlay{
     position:fixed;
     inset:0;
     z-index:99999;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0,0.88);
     backdrop-filter:blur(8px);
     display:flex;
     align-items:center;
@@ -536,7 +536,7 @@
     padding:20px;
     opacity:0;
     pointer-events:none;
-    transition:opacity 0.25s ease;
+    transition:opacity 0.2s ease;
   }
   .ticket-modal-overlay.active{
     opacity:1;
@@ -544,84 +544,81 @@
   }
 
   .ticket-modal{
-    background:linear-gradient(145deg, #222228, #16161A);
-    border:1.5px solid rgba(255,184,0,0.4);
-    border-radius:24px;
-    padding:32px 24px;
-    max-width:440px;
+    background:#1E1E24;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:20px;
+    padding:24px 20px 20px;
+    max-width:540px;
     width:100%;
-    text-align:center;
-    box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 30px rgba(255,184,0,0.15);
-    transform:scale(0.92);
-    transition:transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position:relative;
+    box-shadow:0 24px 60px rgba(0,0,0,0.8);
+    transform:scale(0.95);
+    transition:transform 0.2s ease;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    align-items:center;
   }
   .ticket-modal-overlay.active .ticket-modal{
     transform:scale(1);
   }
 
-  .ticket-modal-icon{
-    font-size:44px;
-    margin-bottom:12px;
-    line-height:1;
-  }
-
-  .ticket-modal-title{
-    font-family:'Anton', sans-serif;
-    font-size:24px;
-    text-transform:uppercase;
+  .modal-close-btn{
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:rgba(255,255,255,0.08);
+    border:none;
     color:var(--paper);
-    margin-bottom:8px;
-    letter-spacing:0.02em;
-  }
-
-  .ticket-modal-desc{
-    font-size:14.5px;
-    color:#D8D6D0;
-    line-height:1.5;
-    margin-bottom:22px;
-  }
-
-  .ticket-modal-actions{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .btn-modal-download{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    font-size:16px;
+    cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:8px;
+    transition:background 0.2s;
+  }
+  .modal-close-btn:hover{
+    background:rgba(255,255,255,0.2);
+  }
+
+  .modal-img-wrap{
     width:100%;
-    padding:14px 20px;
+    border-radius:12px;
+    overflow:hidden;
+    background:#121215;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:140px;
+  }
+  .modal-img-wrap img{
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:12px;
+  }
+
+  .btn-modal-download{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 28px;
     background:linear-gradient(135deg, #FFB800, #FF8C42);
     color:var(--ink);
     font-family:'Work Sans', sans-serif;
-    font-size:15px;
+    font-size:14px;
     font-weight:800;
     border-radius:100px;
     border:none;
     cursor:pointer;
-    transition:transform 0.15s, box-shadow 0.15s;
-    box-shadow:0 6px 20px rgba(255,184,0,0.35);
+    box-shadow:0 6px 18px rgba(255,184,0,0.3);
+    transition:transform 0.15s;
   }
   .btn-modal-download:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 26px rgba(255,184,0,0.5);
-  }
-
-  .btn-modal-dismiss{
-    background:none;
-    border:none;
-    color:#A6A49E;
-    font-size:14px;
-    font-weight:600;
-    padding:8px;
-    cursor:pointer;
-    text-decoration:underline;
-  }
-  .btn-modal-dismiss:hover{
-    color:var(--paper);
+    transform:translateY(-1px);
   }
 
   .btn-return{
@@ -732,6 +729,7 @@
         </div>
 
         <button type="submit" class="btn-submit">Submit now</button>
+        <a href="javascript:void(0)" onclick="previewTicketView()" style="display:block; text-align:center; margin-top:14px; color:#A6A49E; font-size:13px; text-decoration:underline; cursor:pointer;">Preview Post-Submission Ticket Page →</a>
       </form>
     </div>
 
@@ -798,16 +796,16 @@
 
       <!-- Action Buttons -->
       <div class="ticket-actions">
-        <button type="button" class="btn-save-ticket" id="saveTicketBtn" onclick="downloadTicketImage()">
-          <span>📥</span> Save Ticket as Image
+        <button type="button" class="btn-save-ticket" id="saveTicketBtn" onclick="openTicketImageModal()">
+          Save Ticket as Image
         </button>
 
         <button type="button" class="wa-share-btn" id="waShareBtn">
-          <span>📢</span> Share Ticket on WhatsApp Status
+          Share to WA
         </button>
 
         <a href="https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs" target="_blank" rel="noopener noreferrer" class="wa-btn">
-          <span>💬</span> Join Official Freshers WhatsApp Community
+          Join WhatsApp Community
         </a>
       </div>
 
@@ -825,20 +823,16 @@
 
   </div>
 
-  <!-- Pop-Up Modal to Save Ticket as Image -->
+  <!-- Clean Image Preview Pop-Up -->
   <div class="ticket-modal-overlay" id="ticketModalOverlay" onclick="if(event.target===this)closeTicketModal()">
     <div class="ticket-modal">
-      <div class="ticket-modal-icon">🎟️</div>
-      <h3 class="ticket-modal-title">Save Your Ticket Image</h3>
-      <p class="ticket-modal-desc">Your pass is confirmed! Save the ticket image to your phone now so you can present it at the gate to claim your food.</p>
-      <div class="ticket-modal-actions">
-        <button type="button" class="btn-modal-download" id="modalDownloadBtn" onclick="downloadTicketImage()">
-          <span>📥</span> Save Ticket Image Now
-        </button>
-        <button type="button" class="btn-modal-dismiss" id="modalDismissBtn" onclick="closeTicketModal()">
-          I'll Save It Later
-        </button>
+      <button type="button" class="modal-close-btn" onclick="closeTicketModal()" aria-label="Close">✕</button>
+      <div class="modal-img-wrap" id="modalImgWrap">
+        <!-- Rendered ticket image appears here -->
       </div>
+      <button type="button" class="btn-modal-download" id="modalDownloadBtn" onclick="downloadCurrentTicket()">
+        Download Image
+      </button>
     </div>
   </div>
 
@@ -880,10 +874,10 @@
         }
 
         if (ev.schedule) {
-          const scheduleEl = document.getElementById('ticketSchedule');
-          const venueEl = document.getElementById('ticketVenue');
+          const scheduleEl = document.getElementById('tkDate');
+          const venueEl = document.getElementById('tkColourVenue');
           if (scheduleEl && ev.schedule.date && ev.schedule.time) {
-            scheduleEl.textContent = `${ev.schedule.date.replace('Sunday', 'Sun').replace('Saturday', 'Sat')} · ${ev.schedule.time}`;
+            scheduleEl.textContent = `${ev.schedule.time} (${ev.schedule.date.replace('Sunday', 'Sun').replace('Saturday', 'Sat')})`;
           }
           if (venueEl && ev.schedule.venue) {
             venueEl.textContent = ev.schedule.venue;
@@ -958,21 +952,16 @@
           assigned_team: teamName
         };
 
-        // Insert into Supabase database (which triggers your Webhook to Make.com)
+        // Insert into Supabase database asynchronously so ticket renders instantly
         if (supabaseClient) {
-          try {
-            const { data, error } = await supabaseClient
-              .from('picnic_registrations')
-              .insert([payload]);
-
-            if (error) {
-              console.warn('Supabase insertion notice:', error.message);
-            } else {
-              console.log('Successfully registered in Supabase:', ticketId);
-            }
-          } catch (dbErr) {
-            console.warn('Database network request error:', dbErr);
-          }
+          supabaseClient
+            .from('picnic_registrations')
+            .insert([payload])
+            .then(({ error }) => {
+              if (error) console.warn('Supabase insertion notice:', error.message);
+              else console.log('Successfully registered in Supabase:', ticketId);
+            })
+            .catch(dbErr => console.warn('Database network request error:', dbErr));
         }
 
         // Populate realistic stub ticket fields
@@ -1038,16 +1027,11 @@
         // Wire WhatsApp Share with image & caption
         wireWhatsAppShare(ticketId);
 
-        // Swap view
+        // Swap view to Ticket Pass
         document.getElementById('formContainer').style.display = 'none';
         const ticketCard = document.getElementById('ticketCard');
         ticketCard.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        // Trigger Pop-Up to save ticket as image
-        setTimeout(() => {
-          openTicketModal();
-        }, 600);
       });
     }
 
@@ -1067,7 +1051,6 @@
       const ticketEl = document.getElementById('eticket');
       if (!ticketEl) return null;
 
-      // Use html2canvas to capture the e-ticket
       if (typeof html2canvas === 'undefined') {
         throw new Error('html2canvas library is not loaded');
       }
@@ -1080,44 +1063,57 @@
       });
     }
 
-    // Download Ticket as Image
-    async function downloadTicketImage() {
-      const downloadBtn = document.getElementById('saveTicketBtn');
-      const modalBtn = document.getElementById('modalDownloadBtn');
-      if (downloadBtn) downloadBtn.innerHTML = '<span>⏳</span> Generating Image...';
-      if (modalBtn) modalBtn.innerHTML = '<span>⏳</span> Generating Image...';
+    // Open clean image preview modal when clicking "Save Ticket as Image"
+    async function openTicketImageModal() {
+      const saveBtn = document.getElementById('saveTicketBtn');
+      const originalText = saveBtn ? saveBtn.textContent : 'Save Ticket as Image';
+      if (saveBtn) saveBtn.textContent = 'Generating image...';
 
       try {
         const canvas = await renderTicketCanvas();
         if (!canvas) throw new Error('Canvas render failed');
 
-        const imageUri = canvas.toDataURL('image/png');
-        const a = document.createElement('a');
-        a.href = imageUri;
-        a.download = `UNN_FX26_Pass_${window.currentTicketId || 'Ticket'}.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        window.currentTicketCanvas = canvas;
 
-        closeTicketModal();
+        const imgWrap = document.getElementById('modalImgWrap');
+        if (imgWrap) {
+          imgWrap.innerHTML = '';
+          const img = new Image();
+          img.src = canvas.toDataURL('image/png');
+          img.alt = 'Pass Ticket';
+          imgWrap.appendChild(img);
+        }
+
+        openTicketModal();
       } catch (err) {
         console.error('Image generation error:', err);
-        alert('Could not auto-generate image. Please take a screenshot of your ticket above!');
+        alert('Could not render image automatically. Please take a screenshot of your ticket!');
       } finally {
-        if (downloadBtn) downloadBtn.innerHTML = '<span>📥</span> Save Ticket as Image';
-        if (modalBtn) modalBtn.innerHTML = '<span>📥</span> Save Ticket Image Now';
+        if (saveBtn) saveBtn.textContent = originalText;
       }
     }
 
-    // Share Ticket with Image and Caption on WhatsApp Status
+    // Download the rendered ticket image
+    function downloadCurrentTicket() {
+      if (!window.currentTicketCanvas) return;
+      const a = document.createElement('a');
+      a.href = window.currentTicketCanvas.toDataURL('image/png');
+      a.download = `UNN_FX26_Pass_${window.currentTicketId || 'Ticket'}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      closeTicketModal();
+    }
+
+    // Share Ticket with Image and Caption on WhatsApp
     function wireWhatsAppShare(ticketId) {
       const shareBtn = document.getElementById('waShareBtn');
       if (!shareBtn) return;
 
       shareBtn.onclick = async function (e) {
         e.preventDefault();
-        const originalHtml = shareBtn.innerHTML;
-        shareBtn.innerHTML = '<span>⏳</span> Preparing Ticket Image...';
+        const originalText = shareBtn.textContent;
+        shareBtn.textContent = 'Preparing...';
 
         const shareMsg = `I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw`;
 
@@ -1128,7 +1124,7 @@
           const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
           const file = new File([blob], `UNN_FX26_Pass_${ticketId}.png`, { type: 'image/png' });
 
-          // Modern Mobile Web Share API: shares image + caption directly into WhatsApp
+          // Modern Mobile Web Share API (Android & iOS)
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
@@ -1136,7 +1132,7 @@
               title: 'Freshers\' Xperience FX26 Ticket'
             });
           } else {
-            // Fallback: trigger download and open WhatsApp with caption
+            // Fallback: download image and open WhatsApp
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `UNN_FX26_Pass_${ticketId}.png`;
@@ -1146,14 +1142,13 @@
 
             const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
             window.open(waUrl, '_blank');
-            alert('Your ticket image has been downloaded! You can now attach it directly to your WhatsApp status.');
           }
         } catch (err) {
           console.warn('Share issue fallback:', err);
           const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`;
           window.open(waUrl, '_blank');
         } finally {
-          shareBtn.innerHTML = originalHtml;
+          shareBtn.textContent = originalText;
         }
       };
     }
