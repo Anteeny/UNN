@@ -9,8 +9,13 @@
 <meta property="og:description" content="2 Days. 2 Epic Experiences. Free entry & food for all UNN Freshers. Register to secure your food!">
 <meta property="og:image" content="assets/FRESHERS EXPERIENCE.png">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://fx26.ncfunn.site/">
+<link rel="canonical" href="https://fx26.ncfunn.site/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="assets/FRESHERS EXPERIENCE.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -147,11 +152,12 @@
   }
 
   .pills{
-    margin-top:36px;
+    margin-top:32px;
     display:flex;
     flex-wrap:wrap;
-    gap:12px;
+    gap:10px;
     justify-content:center;
+    align-items:center;
   }
 
   .pill{
@@ -160,11 +166,12 @@
     gap:8px;
     background:rgba(255,255,255,0.06);
     border:1px solid rgba(255,255,255,0.14);
-    padding:10px 18px;
+    padding:8px 16px;
     border-radius:100px;
-    font-size:15px;
+    font-size:14px;
     font-weight:500;
     color:var(--paper);
+    white-space:nowrap;
   }
 
   .dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -496,6 +503,7 @@
     grid-template-columns:1fr 1fr;
     gap:36px;
     margin-top:28px;
+    align-items:start;
   }
 
   .standalone-flyer-col{
@@ -504,29 +512,57 @@
     text-align:left;
   }
 
-  .flyer-col-title{
-    font-family:'Anton', sans-serif;
-    font-size:26px;
-    text-transform:uppercase;
-    letter-spacing:0.02em;
-    margin-bottom:14px;
-    color:var(--paper);
+  .flyer-col-header{
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:8px;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:16px;
+    min-height:76px;
+    justify-content:flex-end;
   }
 
-  .flyer-col-title .col-badge{
-    font-size:11.5px;
+  .flyer-badge-row{
+    display:flex;
+    align-items:center;
+  }
+
+  .col-badge{
+    font-size:12px;
     font-weight:800;
     padding:4px 12px;
     border-radius:100px;
-    letter-spacing:0.05em;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    display:inline-flex;
+    align-items:center;
   }
-  .flyer-col-title.day1 .col-badge{ background:rgba(255,184,0,0.18); color:var(--amber); }
-  .flyer-col-title.day2 .col-badge{ background:rgba(63,214,138,0.18); color:var(--grass); }
+  .col-badge.day1{
+    background:rgba(255,184,0,0.18);
+    color:var(--amber);
+    border:1px solid rgba(255,184,0,0.35);
+  }
+  .col-badge.day2{
+    background:rgba(63,214,138,0.18);
+    color:var(--grass);
+    border:1px solid rgba(63,214,138,0.35);
+  }
+
+  .flyer-col-title{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(22px, 2.3vw, 28px);
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    color:var(--paper);
+    margin:0;
+    line-height:1.15;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .flyer-col-title .fx-tag{
+    color:var(--sky);
+    font-size:0.85em;
+  }
 
   .standalone-flyer-img{
     position:relative;
@@ -809,6 +845,16 @@
     .hero{ padding:56px 0 72px; }
   }
 
+  @media (max-width:768px){
+    .standalone-flyers-grid{
+      grid-template-columns:1fr;
+      gap:40px;
+    }
+    .flyer-col-header{
+      min-height:auto;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     .headline .c1, .headline .c3{
@@ -895,10 +941,12 @@
       <div class="standalone-flyers-grid">
         <!-- Day 1 Flyer -->
         <div class="standalone-flyer-col">
-          <h3 class="flyer-col-title day1">
-            <span>Day 1: Colour Picnic</span>
-            <span class="col-badge">Sat 26 Sept · 12PM</span>
-          </h3>
+          <div class="flyer-col-header">
+            <div class="flyer-badge-row">
+              <span class="col-badge day1">Sat 26 Sept · 12:00 PM</span>
+            </div>
+            <h3 class="flyer-col-title">Day 1: Colour Picnic</h3>
+          </div>
           <div class="standalone-flyer-img" onclick="openLightbox('assets/Freshers Colour Picnic Design.png', 'UNN Freshers Colour Picnic Flyer')">
             <img src="assets/Freshers Colour Picnic Design.png" alt="UNN Freshers Colour Picnic 2026 Flyer">
             <div class="flyer-zoom-hint">🔍 Tap to Zoom / Download</div>
@@ -907,10 +955,12 @@
 
         <!-- Day 2 Flyer -->
         <div class="standalone-flyer-col">
-          <h3 class="flyer-col-title day2">
-            <span>Day 2: Freshers' Xperience FX26</span>
-            <span class="col-badge">Sun 27 Sept · 3PM</span>
-          </h3>
+          <div class="flyer-col-header">
+            <div class="flyer-badge-row">
+              <span class="col-badge day2">Sun 27 Sept · 3:00 PM</span>
+            </div>
+            <h3 class="flyer-col-title">Day 2: Freshers' Xperience <span class="fx-tag">FX26</span></h3>
+          </div>
           <div class="standalone-flyer-img" onclick="openLightbox('assets/FRESHERS EXPERIENCE.png', 'Freshers\' Xperience FX26 Flyer')">
             <img src="assets/FRESHERS EXPERIENCE.png" alt="Freshers' Xperience FX26 Flyer">
             <div class="flyer-zoom-hint">🔍 Tap to Zoom / Download</div>
@@ -951,7 +1001,7 @@
 
       <div class="enquiries-card">
         <div><strong>For Enquiries / Sponsorship:</strong> 0906 853 1185, 0916 418 4246</div>
-        <div>&nbsp;|&nbsp; <strong>Register Link:</strong> bit.ly/4xpouzw</div>
+        <div>&nbsp;|&nbsp; <strong>Register Link:</strong> <a href="https://fx26.ncfunn.site/register.html" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">fx26.ncfunn.site</a></div>
       </div>
     </div>
   </section>

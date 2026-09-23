@@ -11,7 +11,8 @@
       "role": "Guest Speaker"
     },
     "enquiries": "0906 853 1185, 0916 418 4246",
-    "shortLink": "bit.ly/4xpouzw",
+    "shortLink": "fx26.ncfunn.site",
+    "domain": "https://fx26.ncfunn.site/",
     "admission": {
       "isFree": true,
       "notice": "Attendance Is FREE, But Registration Is Compulsory."
@@ -74,7 +75,7 @@
     },
     "callToAction": {
       "registerText": "Register to Secure Your Food",
-      "registerUrl": "register.html",
+      "registerUrl": "https://fx26.ncfunn.site/register.html",
       "detailsText": "See Details",
       "detailsUrl": "#details",
       "footerNote": "Attendance Is FREE, But Registration Is Compulsory."
@@ -162,7 +163,7 @@
           "buttonText": "Join WhatsApp Community",
           "url": "https://chat.whatsapp.com/IaZahtu6CVM3CcyWt1pkBs"
         },
-        "shareMessage": "I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://bit.ly/4xpouzw",
+        "shareMessage": "I just registered for Freshers' Xperience FX26 & Colour Picnic at UNN! 🎟️ Entry is 100% FREE with food, scholarship, giveaways & prizes. Register to secure your food: https://fx26.ncfunn.site/",
         "colorTeamsRoster": {
           "title": "UNN Faculty Colour Teams",
           "subtitle": "Find your faculty colour for Saturday's Colour Picnic & rep your team:",
