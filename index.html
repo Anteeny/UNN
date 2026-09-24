@@ -900,7 +900,7 @@
 
       <!-- Live Countdown Timer -->
       <div class="countdown-box" id="countdownBox">
-        <span class="countdown-label">Picnic &amp; Weekend Starts In</span>
+        <span class="countdown-label" id="cdLabel">Main Event Starts In</span>
         <div class="countdown-grid">
           <div class="countdown-unit">
             <div class="countdown-num" id="cdDays">--</div>
@@ -1089,10 +1089,15 @@
           });
         }
 
-        // Live Countdown Logic (counts down to Saturday kickoff)
-        const targetDate = ev.schedule && ev.schedule.isoTimestamp 
-          ? new Date(ev.schedule.isoTimestamp).getTime() 
-          : new Date('2026-09-26T12:00:00+01:00').getTime();
+        if (ev.schedule && ev.schedule.countdown && ev.schedule.countdown.label) {
+          const cdLabel = document.getElementById('cdLabel') || document.querySelector('.countdown-label');
+          if (cdLabel) cdLabel.textContent = ev.schedule.countdown.label;
+        }
+
+        // Live Countdown Logic (counts down to Sunday Main Event: 27th Sept 3:00 PM)
+        const targetDate = ev.schedule && (ev.schedule.countdown?.isoTimestamp || ev.schedule.isoTimestamp)
+          ? new Date(ev.schedule.countdown?.isoTimestamp || ev.schedule.isoTimestamp).getTime() 
+          : new Date('2026-09-27T15:00:00+01:00').getTime();
 
         const cdDays = document.getElementById('cdDays');
         const cdHours = document.getElementById('cdHours');
