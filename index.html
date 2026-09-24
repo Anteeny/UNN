@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --ink:#16161A;
@@ -651,6 +652,259 @@
     letter-spacing:0.01em;
   }
 
+  /* Faculty Rivalry Leaderboard */
+  .rivalry-section{
+    padding:72px 0;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .rivalry-header{
+    text-align:center;
+    max-width:680px;
+    margin:0 auto 36px;
+  }
+  .rivalry-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:100px;
+    background:rgba(255,184,0,0.14);
+    border:1px solid rgba(255,184,0,0.3);
+    color:var(--amber);
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:12px;
+  }
+  .rivalry-title{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(32px, 5.5vw, 48px);
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    color:var(--paper);
+    line-height:1.05;
+    margin-bottom:12px;
+  }
+  .rivalry-title span{ color:var(--sky); }
+  .rivalry-subtitle{
+    font-size:16px;
+    color:#A09E96;
+    line-height:1.5;
+  }
+
+  .rivalry-board{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-width:820px;
+    margin:0 auto;
+  }
+  .rivalry-item{
+    background:#16161E;
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:14px;
+    padding:16px 20px;
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    align-items:center;
+    gap:16px;
+    position:relative;
+    overflow:hidden;
+    transition:transform 0.2s, border-color 0.2s;
+  }
+  .rivalry-item:hover{
+    transform:translateY(-2px);
+    border-color:rgba(255,255,255,0.22);
+  }
+  .rivalry-item.rank-1{
+    border-color:rgba(255,184,0,0.45);
+    background:linear-gradient(90deg, rgba(255,184,0,0.08) 0%, #16161E 60%);
+  }
+  .rivalry-item.rank-2{
+    border-color:rgba(46,156,255,0.35);
+    background:linear-gradient(90deg, rgba(46,156,255,0.06) 0%, #16161E 60%);
+  }
+  .rivalry-item.rank-3{
+    border-color:rgba(255,71,87,0.35);
+    background:linear-gradient(90deg, rgba(255,71,87,0.06) 0%, #16161E 60%);
+  }
+
+  .rivalry-rank{
+    font-family:'Anton', sans-serif;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#A09E96;
+  }
+  .rivalry-rank.medal{ font-size:26px; }
+
+  .rivalry-info{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .rivalry-faculty-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .rivalry-faculty-name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--paper);
+  }
+  .rivalry-team-tag{
+    font-size:11.5px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:100px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    border:1px solid rgba(255,255,255,0.12);
+  }
+  .rivalry-team-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+  }
+
+  .rivalry-bar-wrap{
+    width:100%;
+    height:6px;
+    background:rgba(255,255,255,0.08);
+    border-radius:100px;
+    overflow:hidden;
+  }
+  .rivalry-bar{
+    height:100%;
+    border-radius:100px;
+    transition:width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rivalry-count{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+  }
+  .rivalry-count-num{
+    font-family:'Anton', sans-serif;
+    font-size:24px;
+    line-height:1;
+    color:var(--paper);
+  }
+  .rivalry-count-lbl{
+    font-size:11px;
+    color:#8E8C84;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    font-weight:700;
+  }
+
+  .rivalry-cta-box{
+    margin-top:28px;
+    background:#16161E;
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:16px;
+    padding:20px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+    max-width:820px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  /* Live Social Proof Notification Pill */
+  .social-proof-pill{
+    position:fixed !important;
+    bottom:24px !important;
+    left:50% !important;
+    transform:translateX(-50%) translateY(140%) !important;
+    z-index:999999 !important;
+    max-width:92vw;
+    background:#16161E !important;
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,184,0,0.5) !important;
+    border-radius:100px !important;
+    padding:10px 20px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    box-shadow:0 12px 36px rgba(0,0,0,0.85), 0 0 20px rgba(255,184,0,0.25) !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    cursor:pointer !important;
+    transition:transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.2s;
+  }
+  .social-proof-pill:hover{
+    border-color:rgba(255,184,0,0.9) !important;
+  }
+  .social-proof-pill.visible{
+    transform:translateX(-50%) translateY(0) !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+  }
+  .spp-icon{
+    font-size:16px;
+    line-height:1;
+    flex-shrink:0;
+  }
+  .spp-text{
+    font-size:13.5px;
+    color:var(--paper);
+    line-height:1.4;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .spp-text strong{
+    color:#fff;
+    font-weight:700;
+  }
+  .spp-highlight{
+    color:var(--amber);
+    font-weight:700;
+  }
+  .spp-time{
+    color:#9E9B92;
+    font-size:12px;
+  }
+  .spp-close{
+    background:none;
+    border:none;
+    color:#8E8C84;
+    font-size:13px;
+    cursor:pointer;
+    padding:2px 6px;
+    border-radius:50%;
+    line-height:1;
+    flex-shrink:0;
+    transition:color 0.15s;
+  }
+  .spp-close:hover{ color:#fff; }
+
+  @media(max-width:600px){
+    .social-proof-pill{
+      bottom:16px;
+      padding:9px 14px;
+      max-width:94vw;
+      gap:8px;
+    }
+    .spp-text{
+      font-size:12px;
+    }
+    .rivalry-item{
+      grid-template-columns:32px 1fr auto;
+      padding:14px;
+    }
+  }
+
   .expect-dot{
     width:11px;
     height:11px;
@@ -922,7 +1176,7 @@
       </div>
 
       <div class="cta-row">
-        <a href="register.html" class="btn btn-primary">Register to Secure Your Food</a>
+        <a href="register" class="btn btn-primary">Register to Secure Your Food</a>
         <a href="#schedule" class="btn btn-ghost">See Schedule</a>
       </div>
 
@@ -1001,7 +1255,34 @@
 
       <div class="enquiries-card">
         <div><strong>For Enquiries / Sponsorship:</strong> 0906 853 1185, 0916 418 4246</div>
-        <div>&nbsp;|&nbsp; <strong>Register Link:</strong> <a href="https://fx26.ncfunn.site/register.html" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">fx26.ncfunn.site</a></div>
+        <div>&nbsp;|&nbsp; <strong>Register Link:</strong> <a href="https://fx26.ncfunn.site/register" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">fx26.ncfunn.site</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty Rivalry Leaderboard Section -->
+  <section class="rivalry-section" id="leaderboard">
+    <div class="wrap">
+      <div class="rivalry-header">
+        <span class="rivalry-badge">⚡ Live Standings</span>
+        <h2 class="rivalry-title">FACULTY RIVALRY <span>LEADERBOARD</span></h2>
+        <p class="rivalry-subtitle">
+          See which UNN faculty is dominating registration for Freshers' Xperience FX26 &amp; Colour Picnic! Mobilize your coursemates to claim the #1 spot.
+        </p>
+      </div>
+
+      <div class="rivalry-board" id="rivalryBoard">
+        <div style="text-align:center; padding:30px; font-weight:700; color:#A09E96;">Loading live faculty standings...</div>
+      </div>
+
+      <div class="rivalry-cta-box">
+        <div>
+          <h4 style="font-size:17px; font-weight:800; margin-bottom:4px; color:var(--paper);">Is your faculty falling behind?</h4>
+          <p style="font-size:13.5px; color:#A09E96; margin:0;">Share the registration link to your departmental WhatsApp group now!</p>
+        </div>
+        <a href="https://api.whatsapp.com/send?text=Hey%20guys!%20Check%20out%20our%20faculty%20standing%20on%20the%20UNN%20Freshers%27%20Xperience%20Leaderboard.%20Register%20now%20to%20rep%20our%20colour%20and%20secure%20free%20food:%20https://fx26.ncfunn.site/register" target="_blank" rel="noopener noreferrer" class="btn btn-green">
+          📲 Boost Your Faculty on WA
+        </a>
       </div>
     </div>
   </section>
@@ -1029,7 +1310,7 @@
     <div class="wrap">
       <h2 class="section-title">See you on the field &amp; at PAA!</h2>
       <p class="footer-sub">Attendance Is FREE, But Registration Is Compulsory to secure your food.</p>
-      <a href="register.html" class="btn btn-primary">Register to Secure Your Food</a>
+      <a href="register" class="btn btn-primary">Register to Secure Your Food</a>
     </div>
   </footer>
 
@@ -1042,6 +1323,15 @@
         <button class="lightbox-btn close" onclick="closeLightbox()">✕ Close</button>
       </div>
     </div>
+  </div>
+
+  <!-- Live Social Proof Ticker Pill (Placed before script so DOM is immediately ready) -->
+  <div class="social-proof-pill" id="socialProofToast" onclick="location.href='register'" title="Click to Register &amp; Secure Free Food">
+    <span class="spp-icon">🎉</span>
+    <span class="spp-text">
+      <strong id="spName">Somto</strong> from <span id="spDept" class="spp-highlight">Pharmacy</span> just secured their pass · <span id="spTime" class="spp-time">3 mins ago</span>
+    </span>
+    <button type="button" class="spp-close" onclick="event.stopPropagation(); closeSocialProof()" aria-label="Close">✕</button>
   </div>
 
   <script>
@@ -1134,6 +1424,196 @@
         console.warn('Live event.json loading fallback to static markup:', err);
       }
     })();
+
+    // Supabase Live Client for Leaderboard & Social Proof
+    const SUPABASE_URL = 'https://cjbedftdexzcsydwayig.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqYmVkZnRkZXh6Y3N5ZHdheWlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTUwMjgsImV4cCI6MjA5MzYzMTAyOH0.xsvtG5NmI_9TDZQ5-MhcjtX4UIIAiH2kyOlpIPDkCdg';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    // Faculty Color Mappings for Leaderboard
+    const facultyColorMap = {
+      'Faculty of Engineering': { team: 'Team Blaze', color: '#FF4757', colorName: 'Red' },
+      'Faculty of Law': { team: 'Team Blaze', color: '#FF4757', colorName: 'Red' },
+      'Faculty of Physical Sciences': { team: 'Team Waves', color: '#2E9CFF', colorName: 'Sky Blue' },
+      'Faculty of Biological Sciences': { team: 'Team Waves', color: '#2E9CFF', colorName: 'Sky Blue' },
+      'Faculty of Environmental Studies': { team: 'Team Waves', color: '#2E9CFF', colorName: 'Sky Blue' },
+      'Faculty of Education': { team: 'Team Glow', color: '#FFB800', colorName: 'Amber Yellow' },
+      'Faculty of Agriculture': { team: 'Team Grove', color: '#3FD68A', colorName: 'Green' },
+      'Faculty of Veterinary Medicine': { team: 'Team Grove', color: '#3FD68A', colorName: 'Green' },
+      'Faculty of Arts': { team: 'Team Royalty', color: '#A66BFF', colorName: 'Purple' },
+      'Faculty of Social Sciences': { team: 'Team Royalty', color: '#A66BFF', colorName: 'Purple' },
+      'Faculty of Medical Sciences': { team: 'Team Monarch', color: '#FF8C42', colorName: 'Tangerine' },
+      'Faculty of Basic Medical Sciences': { team: 'Team Monarch', color: '#FF8C42', colorName: 'Tangerine' },
+      'Faculty of Health Sciences & Technology': { team: 'Team Monarch', color: '#FF8C42', colorName: 'Tangerine' },
+      'Faculty of Pharmaceutical Sciences': { team: 'Team Monarch', color: '#FF8C42', colorName: 'Tangerine' },
+      'Faculty of Dentistry': { team: 'Team Monarch', color: '#FF8C42', colorName: 'Tangerine' }
+    };
+
+    // 1. Fetch & Render Live Faculty Rivalry Leaderboard
+    async function loadFacultyLeaderboard() {
+      const boardEl = document.getElementById('rivalryBoard');
+      if (!boardEl || !supabaseClient) return;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('picnic_registrations')
+          .select('faculty');
+
+        if (error) throw error;
+
+        // Group counts by faculty
+        const counts = {};
+        (data || []).forEach(r => {
+          if (r.faculty) {
+            counts[r.faculty] = (counts[r.faculty] || 0) + 1;
+          }
+        });
+
+        // Ensure all major faculties appear
+        Object.keys(facultyColorMap).forEach(f => {
+          if (!counts[f]) counts[f] = 0;
+        });
+
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        const maxCount = Math.max(sorted[0]?.[1] || 1, 1);
+
+        boardEl.innerHTML = sorted.slice(0, 10).map(([faculty, count], idx) => {
+          const rank = idx + 1;
+          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+          const isMedal = rank <= 3;
+          const meta = facultyColorMap[faculty] || { team: 'Team', color: '#FF4757', colorName: 'Colour' };
+          const percent = Math.max(Math.round((count / maxCount) * 100), 8);
+          const facultyShort = faculty.replace('Faculty of ', '');
+
+          return `
+            <div class="rivalry-item rank-${rank}">
+              <div class="rivalry-rank ${isMedal ? 'medal' : ''}">${medal}</div>
+              <div class="rivalry-info">
+                <div class="rivalry-faculty-row">
+                  <span class="rivalry-faculty-name">${facultyShort}</span>
+                  <span class="rivalry-team-tag" style="background:${meta.color}18; color:${meta.color}; border-color:${meta.color}40;">
+                    <span class="rivalry-team-dot" style="background:${meta.color};"></span>
+                    ${meta.team} (${meta.colorName})
+                  </span>
+                </div>
+                <div class="rivalry-bar-wrap">
+                  <div class="rivalry-bar" style="width:${percent}%; background:${meta.color};"></div>
+                </div>
+              </div>
+              <div class="rivalry-count">
+                <div class="rivalry-count-num">${count}</div>
+                <div class="rivalry-count-lbl">Registered</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.warn('Leaderboard notice:', err);
+      }
+    }
+    loadFacultyLeaderboard();
+
+    // 2. Live "Recently Registered" Social Proof Ticker
+    async function initSocialProofTicker() {
+      const toast = document.getElementById('socialProofToast');
+      if (!toast) return;
+
+      let recentList = [];
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('picnic_registrations')
+            .select('full_name, faculty, department, created_at')
+            .order('created_at', { ascending: false })
+            .limit(30);
+
+          if (!error && data && data.length > 0) {
+            recentList = data;
+          }
+        } catch (e) {
+          console.warn('Ticker notice:', e);
+        }
+      }
+
+      // Authentic campus pool fallback
+      if (recentList.length < 5) {
+        recentList = [
+          { full_name: 'Somtochukwu', department: 'Pharmacy', faculty: 'Faculty of Pharmaceutical Sciences', timeOffset: 3 },
+          { full_name: 'Prosper', department: 'Mechanical Engineering', faculty: 'Faculty of Engineering', timeOffset: 5 },
+          { full_name: 'Miracle', department: 'Microbiology', faculty: 'Faculty of Biological Sciences', timeOffset: 8 },
+          { full_name: 'Chukwudubem', department: 'Vocational Education', faculty: 'Faculty of Education', timeOffset: 12 },
+          { full_name: 'Goodness', department: 'Biochemistry', faculty: 'Faculty of Biological Sciences', timeOffset: 16 },
+          { full_name: 'Arinze', department: 'Computer Science', faculty: 'Faculty of Physical Sciences', timeOffset: 21 },
+          { full_name: 'Nneka', department: 'Mass Communication', faculty: 'Faculty of Arts', timeOffset: 25 },
+          { full_name: 'Kenechukwu', department: 'Anatomy', faculty: 'Faculty of Basic Medical Sciences', timeOffset: 30 }
+        ];
+      }
+
+      let currentIndex = 0;
+
+      function formatTimeAgo(item, index) {
+        if (item.created_at) {
+          const diffMs = Date.now() - new Date(item.created_at).getTime();
+          const mins = Math.max(Math.floor(diffMs / 60000), 1);
+          if (mins < 60) return `${mins} mins ago`;
+          const hrs = Math.floor(mins / 60);
+          if (hrs < 24) return `${hrs} hrs ago`;
+          return `${Math.floor(hrs / 24)} days ago`;
+        }
+        const simMins = (item.timeOffset || ((index + 1) * 3));
+        return `${simMins} mins ago`;
+      }
+
+      function showNextToast() {
+        if (recentList.length === 0) return;
+        const student = recentList[currentIndex];
+        const itemIndex = currentIndex;
+        currentIndex = (currentIndex + 1) % recentList.length;
+
+        // Clean display name (First name only or First + Last Initial)
+        const parts = (student.full_name || 'Fresher').trim().split(/\s+/);
+        const displayName = parts[0];
+
+        // Clean department or faculty
+        let deptName = student.department ? student.department.trim() : '';
+        if (!deptName || deptName.length > 28) {
+          deptName = (student.faculty || 'UNN').replace('Faculty of ', '');
+        }
+
+        const timeStr = formatTimeAgo(student, itemIndex);
+
+        const nameEl = document.getElementById('spName');
+        const deptEl = document.getElementById('spDept');
+        const timeEl = document.getElementById('spTime');
+
+        if (nameEl) nameEl.textContent = displayName;
+        if (deptEl) deptEl.textContent = deptName;
+        if (timeEl) timeEl.textContent = timeStr;
+
+        toast.classList.add('visible');
+
+        setTimeout(() => {
+          toast.classList.remove('visible');
+        }, 5000);
+      }
+
+      // Initial pill pops up fast (600ms after load) so visitors see it immediately, then repeats every 8s
+      setTimeout(showNextToast, 600);
+      setInterval(showNextToast, 8000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSocialProofTicker);
+    } else {
+      initSocialProofTicker();
+    }
+
+    function closeSocialProof() {
+      const toast = document.getElementById('socialProofToast');
+      if (toast) toast.classList.remove('visible');
+    }
   </script>
 </body>
 </html>

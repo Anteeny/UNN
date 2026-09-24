@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizer Admin & Check-In Portal — Freshers' Xperience FX26 | UNN</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --ink:#121216;
+    --card-bg:#1A1A22;
+    --card-border:rgba(255,255,255,0.12);
+    --paper:#FBF9F5;
+    --red:#FF4757;
+    --amber:#FFB800;
+    --sky:#2E9CFF;
+    --grass:#3FD68A;
+    --violet:#A66BFF;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+    padding:20px;
+    line-height:1.5;
+  }
+
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  /* PIN Modal */
+  .pin-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,14,0.95);
+    backdrop-filter:blur(10px);
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .pin-box{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    padding:36px 28px;
+    max-width:400px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,0.8);
+  }
+  .pin-icon{ font-size:42px; margin-bottom:12px; }
+  .pin-title{
+    font-family:'Anton', sans-serif;
+    font-size:26px;
+    letter-spacing:0.02em;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .pin-sub{ font-size:14px; color:#A09E96; margin-bottom:24px; }
+  .pin-input{
+    width:100%;
+    background:#0E0E12;
+    border:2px solid rgba(255,255,255,0.2);
+    border-radius:12px;
+    padding:14px;
+    font-size:22px;
+    color:#fff;
+    text-align:center;
+    letter-spacing:0.3em;
+    outline:none;
+    margin-bottom:16px;
+    transition:border-color 0.2s;
+  }
+  .pin-input:focus{ border-color:var(--amber); }
+  .pin-btn{
+    width:100%;
+    padding:14px;
+    background:linear-gradient(135deg, var(--amber), #FF8C42);
+    color:var(--ink);
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .pin-error{ color:var(--red); font-size:13px; font-weight:600; margin-top:12px; display:none; }
+
+  /* Admin Header */
+  .admin-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--card-border);
+    margin-bottom:24px;
+  }
+  .admin-logo h1{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(24px, 4vw, 32px);
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+  }
+  .admin-logo h1 span{ color:var(--sky); }
+  .admin-sub{ font-size:13px; color:#A09E96; }
+  .admin-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  .btn{
+    padding:10px 18px;
+    border-radius:100px;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:opacity 0.2s, transform 0.15s;
+    text-decoration:none;
+  }
+  .btn:hover{ opacity:0.9; transform:translateY(-1px); }
+  .btn-primary{ background:linear-gradient(135deg, var(--amber), #FF8C42); color:var(--ink); }
+  .btn-green{ background:#25D366; color:#fff; }
+  .btn-ghost{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:var(--paper); }
+
+  /* Stats Grid */
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .stat-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:16px;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::after{
+    content:'';
+    position:absolute;
+    top:0; left:0; width:4px; height:100%;
+  }
+  .stat-card.c-amber::after{ background:var(--amber); }
+  .stat-card.c-sky::after{ background:var(--sky); }
+  .stat-card.c-grass::after{ background:var(--grass); }
+  .stat-card.c-red::after{ background:var(--red); }
+
+  .stat-lbl{ font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:#A09E96; margin-bottom:6px; }
+  .stat-val{ font-family:'Anton', sans-serif; font-size:38px; line-height:1; letter-spacing:0.02em; }
+  .stat-detail{ font-size:12px; color:#A09E96; margin-top:6px; }
+
+  /* Controls Bar */
+  .controls-bar{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:16px;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .search-input{
+    flex:1;
+    min-width:240px;
+    background:#0E0E12;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:100px;
+    padding:10px 18px;
+    font-size:14px;
+    color:#fff;
+    outline:none;
+  }
+  .search-input:focus{ border-color:var(--sky); }
+  .filter-select{
+    background:#0E0E12;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:100px;
+    padding:10px 16px;
+    font-size:13.5px;
+    color:#fff;
+    outline:none;
+    cursor:pointer;
+  }
+
+  /* Attendees Table */
+  .table-wrap{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:16px;
+    overflow-x:auto;
+    box-shadow:0 12px 36px rgba(0,0,0,0.4);
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    text-align:left;
+    font-size:13.5px;
+  }
+  th{
+    background:rgba(255,255,255,0.04);
+    padding:14px 16px;
+    font-weight:700;
+    color:#A09E96;
+    text-transform:uppercase;
+    font-size:11.5px;
+    letter-spacing:0.04em;
+    border-bottom:1px solid var(--card-border);
+    white-space:nowrap;
+  }
+  td{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    vertical-align:middle;
+  }
+  tr:hover td{ background:rgba(255,255,255,0.02); }
+
+  .ticket-badge{
+    font-family:monospace;
+    font-size:12px;
+    font-weight:800;
+    background:#0E0E12;
+    padding:4px 8px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.15);
+    color:var(--amber);
+  }
+
+  .attendee-name{ font-weight:700; color:var(--paper); }
+  .attendee-dept{ font-size:12px; color:#A09E96; }
+
+  .team-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 10px;
+    border-radius:100px;
+    font-size:12px;
+    font-weight:700;
+    border:1px solid rgba(255,255,255,0.15);
+    white-space:nowrap;
+  }
+  .team-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  .wa-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:#25D366;
+    text-decoration:none;
+    font-weight:700;
+    font-size:12px;
+    padding:6px 12px;
+    border-radius:100px;
+    background:rgba(37,211,102,0.12);
+    border:1px solid rgba(37,211,102,0.3);
+    transition:background 0.2s;
+  }
+  .wa-link:hover{ background:rgba(37,211,102,0.22); }
+
+  .checkin-btn{
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:11.5px;
+    font-weight:700;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:all 0.15s;
+  }
+  .checkin-btn.checked{
+    background:rgba(63,214,138,0.15);
+    color:var(--grass);
+    border-color:rgba(63,214,138,0.35);
+  }
+  .checkin-btn.unchecked{
+    background:rgba(255,255,255,0.06);
+    color:#8E8C84;
+    border-color:rgba(255,255,255,0.12);
+  }
+  .checkin-btn.unchecked:hover{
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+  }
+
+  /* Broadcast Modal */
+  .broadcast-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(8px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .broadcast-modal.active{ display:flex; }
+  .broadcast-box{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    max-width:560px;
+    width:100%;
+    padding:28px 24px;
+    position:relative;
+  }
+  .broadcast-box h3{
+    font-family:'Anton', sans-serif;
+    font-size:22px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .broadcast-box p{ font-size:13.5px; color:#A09E96; margin-bottom:16px; }
+  .broadcast-textarea{
+    width:100%;
+    background:#0E0E12;
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:12px;
+    padding:12px;
+    color:#fff;
+    font-family:inherit;
+    font-size:13px;
+    min-height:110px;
+    resize:vertical;
+    margin-bottom:14px;
+  }
+
+  .loading-row{ text-align:center; padding:40px; font-weight:700; color:#A09E96; }
+</style>
+</head>
+<body>
+
+  <!-- PIN Protection Modal -->
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="pin-box">
+      <div class="pin-icon">🔐</div>
+      <h2 class="pin-title">Organizer Access</h2>
+      <p class="pin-sub">Enter organizer PIN to manage attendee check-in and WhatsApp messaging.</p>
+      <input type="password" id="pinInput" class="pin-input" placeholder="••••" maxlength="8" autofocus>
+      <button type="button" class="pin-btn" onclick="verifyPin()">Unlock Portal</button>
+      <div class="pin-error" id="pinError">Invalid PIN. Try again.</div>
+    </div>
+  </div>
+
+  <div class="wrap" id="adminContent" style="display:none;">
+
+    <!-- Top Navigation Header -->
+    <header class="admin-header">
+      <div class="admin-logo">
+        <h1>FX26 <span>Organizer</span> Portal</h1>
+        <p class="admin-sub">NCF UNN Freshers' Xperience &amp; Colour Picnic Attendee Database</p>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="btn btn-ghost" onclick="fetchRegistrations()">🔄 Refresh</button>
+        <button type="button" class="btn btn-green" onclick="openBroadcastModal()">📢 Broadcast Tool</button>
+        <button type="button" class="btn btn-primary" onclick="exportCSV()">📥 Export CSV</button>
+        <a href="./" class="btn btn-ghost">← Homepage</a>
+      </div>
+    </header>
+
+    <!-- Real-time Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card c-amber">
+        <div class="stat-lbl">Total Registered</div>
+        <div class="stat-val" id="totalCount">0</div>
+        <div class="stat-detail">100% Free Food Pass Confirmed</div>
+      </div>
+      <div class="stat-card c-sky">
+        <div class="stat-lbl">Saturday Picnic Checked In</div>
+        <div class="stat-val" id="satCount">0</div>
+        <div class="stat-detail">CEDR Field Attendance</div>
+      </div>
+      <div class="stat-card c-grass">
+        <div class="stat-lbl">Sunday FX26 Checked In</div>
+        <div class="stat-val" id="sunCount">0</div>
+        <div class="stat-detail">PAA Auditorium Attendance</div>
+      </div>
+      <div class="stat-card c-red">
+        <div class="stat-lbl">Leading Faculty</div>
+        <div class="stat-val" style="font-size:22px; margin-top:6px;" id="topFacultyName">Loading...</div>
+        <div class="stat-detail" id="topFacultyCount">0 Attendees</div>
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by name, phone, ticket ID, faculty, or department..." oninput="filterData()">
+      
+      <select id="facultyFilter" class="filter-select" onchange="filterData()">
+        <option value="">All Faculties</option>
+      </select>
+
+      <select id="teamFilter" class="filter-select" onchange="filterData()">
+        <option value="">All Teams &amp; Colours</option>
+      </select>
+
+      <select id="checkinFilter" class="filter-select" onchange="filterData()">
+        <option value="">All Statuses</option>
+        <option value="sat">Checked In (Saturday)</option>
+        <option value="sun">Checked In (Sunday)</option>
+        <option value="unclaimed">Not Yet Checked In</option>
+      </select>
+    </div>
+
+    <!-- Attendees Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Attendee Name &amp; Dept</th>
+            <th>Phone Number</th>
+            <th>Faculty &amp; Colour</th>
+            <th>1-Click WhatsApp</th>
+            <th>Sat (CEDR)</th>
+            <th>Sun (PAA)</th>
+          </tr>
+        </thead>
+        <tbody id="attendeeTableBody">
+          <tr>
+            <td colspan="7" class="loading-row">Loading registered attendees from Supabase...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Broadcast Tool Modal -->
+  <div class="broadcast-modal" id="broadcastModal" onclick="if(event.target===this)closeBroadcastModal()">
+    <div class="broadcast-box">
+      <h3>Faculty / Team WhatsApp Broadcast</h3>
+      <p>Select a group to instantly copy all phone numbers or generate a team reminder message.</p>
+
+      <label style="font-size:12.5px; font-weight:700; color:#A09E96;">Select Faculty / Colour Team:</label>
+      <select id="broadcastTeamSelect" class="filter-select" style="width:100%; margin-top:6px; margin-bottom:14px;" onchange="updateBroadcastPreview()">
+        <option value="all">All Registered Students</option>
+      </select>
+
+      <label style="font-size:12.5px; font-weight:700; color:#A09E96;">Broadcast Message Template:</label>
+      <textarea id="broadcastMsgText" class="broadcast-textarea">Hello! This is NCF UNN Freshers' Xperience FX26. Your registration is confirmed! Remember to wear your official faculty colour to CEDR Field this Saturday 12PM for the Colour Picnic, and join us Sunday 3PM at PAA for the Main Event! 🎟️ Food is secured.</textarea>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary" onclick="copyBroadcastNumbers()">📋 Copy Phone Numbers (<span id="broadcastNumberCount">0</span>)</button>
+        <button type="button" class="btn btn-ghost" onclick="closeBroadcastModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase Credentials
+    const SUPABASE_URL = 'https://cjbedftdexzcsydwayig.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqYmVkZnRkZXh6Y3N5ZHdheWlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTUwMjgsImV4cCI6MjA5MzYzMTAyOH0.xsvtG5NmI_9TDZQ5-MhcjtX4UIIAiH2kyOlpIPDkCdg';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    let allAttendees = [];
+
+    // PIN Authentication (Default: 2026)
+    function verifyPin() {
+      const pin = document.getElementById('pinInput').value.trim();
+      if (pin === '2026') {
+        sessionStorage.setItem('fx26_admin_auth', 'true');
+        document.getElementById('pinOverlay').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        fetchRegistrations();
+      } else {
+        document.getElementById('pinError').style.display = 'block';
+      }
+    }
+
+    document.getElementById('pinInput')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') verifyPin();
+    });
+
+    // Auto-login if previously unlocked in current session
+    if (sessionStorage.getItem('fx26_admin_auth') === 'true') {
+      document.getElementById('pinOverlay').style.display = 'none';
+      document.getElementById('adminContent').style.display = 'block';
+      window.addEventListener('DOMContentLoaded', fetchRegistrations);
+    }
+
+    // Fetch All Registrations from Supabase
+    async function fetchRegistrations() {
+      if (!supabaseClient) return;
+      const tbody = document.getElementById('attendeeTableBody');
+      tbody.innerHTML = '<tr><td colspan="7" class="loading-row">Fetching live records...</td></tr>';
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('picnic_registrations')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allAttendees = data || [];
+        updateStats();
+        populateFilterDropdowns();
+        renderTable(allAttendees);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        tbody.innerHTML = `<tr><td colspan="7" class="loading-row" style="color:var(--red);">Failed to load: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Update Top Counters
+    function updateStats() {
+      document.getElementById('totalCount').textContent = allAttendees.length;
+      const sat = allAttendees.filter(a => a.checked_in_saturday).length;
+      const sun = allAttendees.filter(a => a.checked_in_sunday).length;
+      document.getElementById('satCount').textContent = sat;
+      document.getElementById('sunCount').textContent = sun;
+
+      // Find top faculty
+      const counts = {};
+      allAttendees.forEach(a => {
+        if (a.faculty) counts[a.faculty] = (counts[a.faculty] || 0) + 1;
+      });
+      let topF = 'N/A';
+      let maxC = 0;
+      Object.entries(counts).forEach(([f, c]) => {
+        if (c > maxC) { maxC = c; topF = f.replace('Faculty of ', ''); }
+      });
+      document.getElementById('topFacultyName').textContent = topF;
+      document.getElementById('topFacultyCount').textContent = `${maxC} Registrations`;
+    }
+
+    // Populate Filter Dropdowns
+    function populateFilterDropdowns() {
+      const facSet = new Set();
+      const teamSet = new Set();
+      allAttendees.forEach(a => {
+        if (a.faculty) facSet.add(a.faculty);
+        if (a.assigned_team) teamSet.add(a.assigned_team);
+      });
+
+      const facSelect = document.getElementById('facultyFilter');
+      facSelect.innerHTML = '<option value="">All Faculties</option>';
+      [...facSet].sort().forEach(f => {
+        facSelect.innerHTML += `<option value="${f}">${f}</option>`;
+      });
+
+      const teamSelect = document.getElementById('teamFilter');
+      teamSelect.innerHTML = '<option value="">All Teams &amp; Colours</option>';
+      [...teamSet].sort().forEach(t => {
+        teamSelect.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+
+      // Broadcast dropdown
+      const bSelect = document.getElementById('broadcastTeamSelect');
+      bSelect.innerHTML = '<option value="all">All Registered Students</option>';
+      [...facSet].sort().forEach(f => {
+        bSelect.innerHTML += `<option value="${f}">${f}</option>`;
+      });
+      updateBroadcastPreview();
+    }
+
+    // Render Table Rows
+    function renderTable(list) {
+      const tbody = document.getElementById('attendeeTableBody');
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading-row">No attendees match your search or filter.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(a => {
+        const phone = a.phone_number || '';
+        const cleanPhone = phone.replace(/[\s\-\+]/g, '');
+        const waPhone = cleanPhone.startsWith('0') ? '234' + cleanPhone.substring(1) : cleanPhone;
+        
+        const color = a.assigned_color || '#FF4757';
+        const team = a.assigned_team || 'Team';
+        const facultyShort = (a.faculty || '').replace('Faculty of ', '');
+
+        // Prefilled personal message for WhatsApp
+        const waMsg = encodeURIComponent(
+          `Hello ${a.full_name}! 🎟️ This is NCF UNN Freshers' Xperience. Your pass (${a.ticket_id}) is confirmed! Remember to wear your official team colour (${team}) to CEDR Field this Saturday 12PM for the Colour Picnic, and join us Sunday 3PM at PAA for the Main Event! Free food & entry are secured.`
+        );
+
+        return `
+          <tr>
+            <td><span class="ticket-badge">${a.ticket_id}</span></td>
+            <td>
+              <div class="attendee-name">${escapeHtml(a.full_name)}</div>
+              <div class="attendee-dept">${escapeHtml(a.department || '')}</div>
+            </td>
+            <td>
+              <a href="tel:${phone}" style="color:var(--sky); font-weight:600; text-decoration:none;">${phone}</a>
+            </td>
+            <td>
+              <div style="font-weight:600; margin-bottom:4px;">${escapeHtml(facultyShort)}</div>
+              <span class="team-pill" style="border-color:${color}44;">
+                <span class="team-dot" style="background:${color};"></span>
+                <span style="color:${color};">${escapeHtml(team)}</span>
+              </span>
+            </td>
+            <td>
+              <a href="https://wa.me/${waPhone}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="wa-link">
+                💬 Message on WA
+              </a>
+            </td>
+            <td>
+              <button type="button" class="checkin-btn ${a.checked_in_saturday ? 'checked' : 'unchecked'}" onclick="toggleCheckIn('${a.id}', 'checked_in_saturday', ${!a.checked_in_saturday})">
+                ${a.checked_in_saturday ? '✓ Checked In' : 'Mark Entry'}
+              </button>
+            </td>
+            <td>
+              <button type="button" class="checkin-btn ${a.checked_in_sunday ? 'checked' : 'unchecked'}" onclick="toggleCheckIn('${a.id}', 'checked_in_sunday', ${!a.checked_in_sunday})">
+                ${a.checked_in_sunday ? '✓ Checked In' : 'Mark Entry'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Toggle Gate Check-in
+    async function toggleCheckIn(id, col, newVal) {
+      if (!supabaseClient) return;
+      try {
+        const { error } = await supabaseClient
+          .from('picnic_registrations')
+          .update({ [col]: newVal })
+          .eq('id', id);
+
+        if (error) throw error;
+        // Update local object
+        const item = allAttendees.find(a => a.id === id);
+        if (item) item[col] = newVal;
+        updateStats();
+        filterData();
+      } catch (err) {
+        alert('Check-in update failed: ' + err.message);
+      }
+    }
+
+    // Filter and Search Handler
+    function filterData() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const fac = document.getElementById('facultyFilter').value;
+      const team = document.getElementById('teamFilter').value;
+      const status = document.getElementById('checkinFilter').value;
+
+      const filtered = allAttendees.filter(a => {
+        const matchesQuery = !q || 
+          (a.full_name && a.full_name.toLowerCase().includes(q)) ||
+          (a.phone_number && a.phone_number.includes(q)) ||
+          (a.ticket_id && a.ticket_id.toLowerCase().includes(q)) ||
+          (a.faculty && a.faculty.toLowerCase().includes(q)) ||
+          (a.department && a.department.toLowerCase().includes(q));
+
+        const matchesFac = !fac || a.faculty === fac;
+        const matchesTeam = !team || a.assigned_team === team;
+
+        let matchesStatus = true;
+        if (status === 'sat') matchesStatus = a.checked_in_saturday === true;
+        else if (status === 'sun') matchesStatus = a.checked_in_sunday === true;
+        else if (status === 'unclaimed') matchesStatus = !a.checked_in_saturday && !a.checked_in_sunday;
+
+        return matchesQuery && matchesFac && matchesTeam && matchesStatus;
+      });
+
+      renderTable(filtered);
+    }
+
+    // CSV Export
+    function exportCSV() {
+      if (!allAttendees || allAttendees.length === 0) {
+        alert('No attendees to export!');
+        return;
+      }
+
+      const headers = ['Ticket ID', 'Full Name', 'Phone Number', 'Faculty', 'Department', 'Assigned Colour', 'Assigned Team', 'Sat Check-In', 'Sun Check-In', 'Registered At'];
+      const rows = allAttendees.map(a => [
+        `"${a.ticket_id || ''}"`,
+        `"${(a.full_name || '').replace(/"/g, '""')}"`,
+        `"${a.phone_number || ''}"`,
+        `"${(a.faculty || '').replace(/"/g, '""')}"`,
+        `"${(a.department || '').replace(/"/g, '""')}"`,
+        `"${a.assigned_color || ''}"`,
+        `"${(a.assigned_team || '').replace(/"/g, '""')}"`,
+        a.checked_in_saturday ? 'YES' : 'NO',
+        a.checked_in_sunday ? 'YES' : 'NO',
+        `"${a.created_at || ''}"`
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `NCF_UNN_FX26_Attendees_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Broadcast Modal Controls
+    function openBroadcastModal() {
+      document.getElementById('broadcastModal').classList.add('active');
+      updateBroadcastPreview();
+    }
+    function closeBroadcastModal() {
+      document.getElementById('broadcastModal').classList.remove('active');
+    }
+
+    function updateBroadcastPreview() {
+      const selected = document.getElementById('broadcastTeamSelect').value;
+      const filtered = selected === 'all' 
+        ? allAttendees 
+        : allAttendees.filter(a => a.faculty === selected);
+
+      document.getElementById('broadcastNumberCount').textContent = filtered.length;
+    }
+
+    function copyBroadcastNumbers() {
+      const selected = document.getElementById('broadcastTeamSelect').value;
+      const filtered = selected === 'all' 
+        ? allAttendees 
+        : allAttendees.filter(a => a.faculty === selected);
+
+      const phones = filtered
+        .map(a => (a.phone_number || '').replace(/[\s\-\+]/g, ''))
+        .filter(Boolean)
+        .map(p => p.startsWith('0') ? '234' + p.substring(1) : p);
+
+      if (phones.length === 0) {
+        alert('No phone numbers found for this group.');
+        return;
+      }
+
+      navigator.clipboard.writeText(phones.join(', ')).then(() => {
+        alert(`Copied ${phones.length} phone numbers to clipboard! You can paste them directly into WhatsApp Broadcast or SMS.`);
+      }).catch(err => {
+        prompt('Copy phone numbers below:', phones.join(', '));
+      });
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
