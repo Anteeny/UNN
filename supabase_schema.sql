@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS public.picnic_registrations (
     phone_number TEXT NOT NULL,
     faculty TEXT NOT NULL,
     department TEXT NOT NULL,
+    level_of_study TEXT DEFAULT '100 Level',
+    location TEXT,
     looking_forward_to TEXT,
     assigned_color TEXT NOT NULL,
     assigned_team TEXT NOT NULL,
@@ -30,6 +32,8 @@ CREATE TABLE IF NOT EXISTS public.picnic_registrations (
 -- 2. MIGRATION: Run safely if your table already exists
 -- (Adds newly introduced columns without affecting existing attendee records)
 -- ==============================================================================
+ALTER TABLE public.picnic_registrations ADD COLUMN IF NOT EXISTS level_of_study TEXT DEFAULT '100 Level';
+ALTER TABLE public.picnic_registrations ADD COLUMN IF NOT EXISTS location TEXT;
 ALTER TABLE public.picnic_registrations ADD COLUMN IF NOT EXISTS event_name TEXT DEFAULT 'Freshers'' Xperience FX26 & Colour Picnic';
 ALTER TABLE public.picnic_registrations ADD COLUMN IF NOT EXISTS food_secured BOOLEAN DEFAULT true;
 ALTER TABLE public.picnic_registrations ADD COLUMN IF NOT EXISTS checked_in_saturday BOOLEAN DEFAULT false;

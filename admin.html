@@ -320,6 +320,48 @@
     color:#fff;
   }
 
+  /* Inline Location / Address Input */
+  .location-input-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .location-input{
+    width:100%;
+    min-width:140px;
+    max-width:185px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:8px;
+    padding:7px 10px;
+    color:#fff;
+    font-size:12px;
+    font-family:'Work Sans', sans-serif;
+    outline:none;
+    transition:border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .location-input:focus{
+    background:#0E0E12;
+    border-color:var(--yellow);
+    box-shadow:0 0 0 2px rgba(255,184,0,0.25);
+  }
+  .location-input::placeholder{
+    color:#73716B;
+    font-size:11.5px;
+  }
+  .location-input.saving{
+    border-color:var(--yellow) !important;
+    background:rgba(255,184,0,0.08);
+  }
+  .location-input.saved{
+    border-color:var(--green) !important;
+    background:rgba(63,214,138,0.08);
+  }
+  .location-input.error{
+    border-color:var(--red) !important;
+    background:rgba(255,71,87,0.08);
+  }
+
   /* Broadcast Modal */
   .broadcast-modal{
     position:fixed;
@@ -706,8 +748,21 @@
 
     <!-- Controls Bar -->
     <div class="controls-bar">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by name, phone, ticket ID, faculty, or department..." oninput="filterData()">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by name, phone, ticket ID, faculty, department, or level..." oninput="filterData()">
       
+      <select id="levelFilter" class="filter-select" onchange="filterData()">
+        <option value="">All Study Levels</option>
+        <option value="100 Level">100 Level</option>
+        <option value="200 Level">200 Level</option>
+        <option value="300 Level">300 Level</option>
+        <option value="400 Level">400 Level</option>
+        <option value="500 Level">500 Level</option>
+        <option value="600 Level">600 Level</option>
+        <option value="Postgraduate">Postgraduate</option>
+        <option value="JUPEB / Pre-degree">JUPEB / Pre-degree</option>
+        <option value="Other">Other</option>
+      </select>
+
       <select id="facultyFilter" class="filter-select" onchange="filterData()">
         <option value="">All Faculties</option>
       </select>
@@ -730,17 +785,18 @@
         <thead>
           <tr>
             <th>Ticket ID</th>
-            <th>Attendee Name &amp; Dept</th>
+            <th>Attendee &amp; Level/Dept</th>
             <th>Phone Number</th>
             <th>Faculty &amp; Colour</th>
             <th>1-Click WhatsApp</th>
+            <th>Location / Address</th>
             <th>Sat (CEDR)</th>
             <th>Sun (PAA)</th>
           </tr>
         </thead>
         <tbody id="attendeeTableBody">
           <tr>
-            <td colspan="7" class="loading-row">Loading registered attendees from Supabase...</td>
+            <td colspan="8" class="loading-row">Loading registered attendees from Supabase...</td>
           </tr>
         </tbody>
       </table>
@@ -894,7 +950,7 @@
     async function fetchRegistrations() {
       if (!supabaseClient) return;
       const tbody = document.getElementById('attendeeTableBody');
-      tbody.innerHTML = '<tr><td colspan="7" class="loading-row">Fetching live records...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="loading-row">Fetching live records...</td></tr>';
 
       try {
         const { data, error } = await supabaseClient
@@ -911,7 +967,7 @@
         renderTable(allAttendees);
       } catch (err) {
         console.error('Fetch error:', err);
-        tbody.innerHTML = `<tr><td colspan="7" class="loading-row" style="color:var(--red);">Failed to load: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="loading-row" style="color:var(--red);">Failed to load: ${err.message}</td></tr>`;
       }
     }
 
@@ -1006,7 +1062,7 @@
     function renderTable(list) {
       const tbody = document.getElementById('attendeeTableBody');
       if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="loading-row">No attendees match your search or filter.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="loading-row">No attendees match your search or filter.</td></tr>';
         return;
       }
 
@@ -1030,7 +1086,10 @@
             <td><span class="ticket-badge">${a.ticket_id}</span></td>
             <td>
               <div class="attendee-name">${escapeHtml(a.full_name)}</div>
-              <div class="attendee-dept">${escapeHtml(a.department || '')}</div>
+              <div class="attendee-dept" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px;">
+                <span>${escapeHtml(a.department || '')}</span>
+                ${(a.level_of_study || a.study_level || a.level) ? `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,184,0,0.18); color:var(--yellow); border:1px solid rgba(255,184,0,0.35); padding:1px 6px; border-radius:4px;">${escapeHtml(a.level_of_study || a.study_level || a.level)}</span>` : ''}
+              </div>
             </td>
             <td>
               <a href="tel:${phone}" style="color:var(--sky); font-weight:600; text-decoration:none;">${phone}</a>
@@ -1048,6 +1107,19 @@
               </a>
             </td>
             <td>
+              <div class="location-input-wrap">
+                <input type="text" 
+                       class="location-input" 
+                       placeholder="Hostel / Lodge..." 
+                       value="${escapeHtml(a.location || a.address || '')}" 
+                       data-id="${a.id}" 
+                       onchange="saveLocation('${a.id}', this.value, this)" 
+                       onblur="saveLocation('${a.id}', this.value, this)" 
+                       onkeydown="if(event.key==='Enter')this.blur()" 
+                       title="Click to enter attendee's hostel, lodge or address">
+              </div>
+            </td>
+            <td>
               <button type="button" class="checkin-btn ${a.checked_in_saturday ? 'checked' : 'unchecked'}" onclick="toggleCheckIn('${a.id}', 'checked_in_saturday', ${!a.checked_in_saturday})">
                 ${a.checked_in_saturday ? '✓ Checked In' : 'Mark Entry'}
               </button>
@@ -1060,6 +1132,52 @@
           </tr>
         `;
       }).join('');
+    }
+
+    // Save Attendee Physical Location/Address directly inline
+    async function saveLocation(id, val, el) {
+      const trimmed = (val || '').trim();
+      const item = allAttendees.find(a => a.id === id);
+      if (item) {
+        if ((item.location || item.address || '') === trimmed && !el.classList.contains('error')) return;
+        item.location = trimmed;
+      }
+
+      if (!supabaseClient) return;
+
+      if (el) {
+        el.classList.remove('saved', 'error');
+        el.classList.add('saving');
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from('picnic_registrations')
+          .update({ location: trimmed })
+          .eq('id', id);
+
+        if (error) {
+          console.warn('Location save notice:', error.message);
+          if (el) {
+            el.classList.remove('saving');
+            el.classList.add('error');
+          }
+        } else {
+          if (el) {
+            el.classList.remove('saving');
+            el.classList.add('saved');
+            setTimeout(() => {
+              if (el) el.classList.remove('saved');
+            }, 1200);
+          }
+        }
+      } catch (err) {
+        console.error('Location network error:', err);
+        if (el) {
+          el.classList.remove('saving');
+          el.classList.add('error');
+        }
+      }
     }
 
     // Toggle Gate Check-in
@@ -1086,6 +1204,7 @@
     // Filter and Search Handler
     function filterData() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const lvl = document.getElementById('levelFilter')?.value;
       const fac = document.getElementById('facultyFilter').value;
       const team = document.getElementById('teamFilter').value;
       const status = document.getElementById('checkinFilter').value;
@@ -1093,14 +1212,19 @@
       const filtered = allAttendees.filter(a => {
         const info = getFacultyInfo(a.faculty);
         const normFac = normalizeFaculty(a.faculty);
+        const studentLevel = a.level_of_study || a.study_level || a.level || '';
 
         const matchesQuery = !q || 
           (a.full_name && a.full_name.toLowerCase().includes(q)) ||
           (a.phone_number && a.phone_number.includes(q)) ||
           (a.ticket_id && a.ticket_id.toLowerCase().includes(q)) ||
           (a.faculty && a.faculty.toLowerCase().includes(q)) ||
-          (a.department && a.department.toLowerCase().includes(q));
+          (a.department && a.department.toLowerCase().includes(q)) ||
+          (studentLevel && studentLevel.toLowerCase().includes(q)) ||
+          (a.location && a.location.toLowerCase().includes(q)) ||
+          (a.address && a.address.toLowerCase().includes(q));
 
+        const matchesLevel = !lvl || studentLevel === lvl;
         const matchesFac = !fac || normFac === fac || a.faculty === fac;
         const matchesTeam = !team || info.team === team || a.assigned_team === team;
 
@@ -1109,7 +1233,7 @@
         else if (status === 'sun') matchesStatus = a.checked_in_sunday === true;
         else if (status === 'unclaimed') matchesStatus = !a.checked_in_saturday && !a.checked_in_sunday;
 
-        return matchesQuery && matchesFac && matchesTeam && matchesStatus;
+        return matchesQuery && matchesLevel && matchesFac && matchesTeam && matchesStatus;
       });
 
       renderTable(filtered);
@@ -1122,15 +1246,17 @@
         return;
       }
 
-      const headers = ['Ticket ID', 'Full Name', 'Phone Number', 'Faculty', 'Department', 'Assigned Colour', 'Assigned Team', 'Sat Check-In', 'Sun Check-In', 'Registered At'];
+      const headers = ['Ticket ID', 'Full Name', 'Phone Number', 'Level of Study', 'Faculty', 'Department', 'Location / Address', 'Assigned Colour', 'Assigned Team', 'Sat Check-In', 'Sun Check-In', 'Registered At'];
       const rows = allAttendees.map(a => {
         const info = getFacultyInfo(a.faculty);
         return [
           `"${a.ticket_id || ''}"`,
           `"${(a.full_name || '').replace(/"/g, '""')}"`,
           `"${a.phone_number || ''}"`,
+          `"${(a.level_of_study || a.study_level || a.level || '').replace(/"/g, '""')}"`,
           `"${(a.faculty || '').replace(/"/g, '""')}"`,
           `"${(a.department || '').replace(/"/g, '""')}"`,
+          `"${(a.location || a.address || '').replace(/"/g, '""')}"`,
           `"${info.color || a.assigned_color || ''}"`,
           `"${info.team || a.assigned_team || ''}"`,
           a.checked_in_saturday ? 'YES' : 'NO',

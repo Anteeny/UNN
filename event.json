@@ -132,6 +132,23 @@
           "required": true
         },
         {
+          "name": "levelOfStudy",
+          "label": "Level of Study",
+          "type": "select",
+          "required": true,
+          "options": [
+            "100 Level",
+            "200 Level",
+            "300 Level",
+            "400 Level",
+            "500 Level",
+            "600 Level",
+            "Postgraduate",
+            "JUPEB / Pre-degree",
+            "Other"
+          ]
+        },
+        {
           "name": "lookingForwardTo",
           "label": "What are you looking forward to?",
           "type": "textarea",

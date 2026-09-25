@@ -738,6 +738,22 @@
         </div>
 
         <div class="form-group">
+          <label class="form-label" for="levelOfStudy">Level of Study</label>
+          <select id="levelOfStudy" class="form-select" required>
+            <option value="" disabled selected>Select your level of study</option>
+            <option value="100 Level">100 Level (Fresher / Year 1)</option>
+            <option value="200 Level">200 Level (Direct Entry / Year 2)</option>
+            <option value="300 Level">300 Level</option>
+            <option value="400 Level">400 Level</option>
+            <option value="500 Level">500 Level</option>
+            <option value="600 Level">600 Level</option>
+            <option value="Postgraduate">Postgraduate</option>
+            <option value="JUPEB / Pre-degree">JUPEB / Pre-degree</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="lookingForwardTo">
             <span>What are you looking forward to?</span>
             <span class="optional-tag">Optional</span>
@@ -772,6 +788,7 @@
             <div class="et-cell">
               <span class="et-cell-lbl">ATTENDEE</span>
               <span class="et-cell-val" id="tkAttendee">Student Name</span>
+              <span class="et-cell-sub" id="tkLevelSub" style="font-size:10.5px; color:#A6A49E; margin-top:2px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">100 Level</span>
             </div>
             <div class="et-cell">
               <span class="et-cell-lbl">FACULTY &amp; COLOUR</span>
@@ -871,7 +888,7 @@
         const ev = data.event;
         if (!ev) return;
 
-        // Dynamically populate faculty select if available in event.json
+        // Dynamically populate faculty and level select if available in event.json
         if (ev.registrationForm && Array.isArray(ev.registrationForm.fields)) {
           const facField = ev.registrationForm.fields.find(f => f.name === 'faculty');
           const facSelect = document.getElementById('faculty');
@@ -882,6 +899,13 @@
                 const color = typeof opt === 'object' ? opt.color : '#FF4757';
                 return `<option value="${name}" data-color="${color}">${name}</option>`;
               }).join('');
+          }
+
+          const lvlField = ev.registrationForm.fields.find(f => f.name === 'levelOfStudy');
+          const lvlSelect = document.getElementById('levelOfStudy');
+          if (lvlField && Array.isArray(lvlField.options) && lvlSelect) {
+            lvlSelect.innerHTML = '<option value="" disabled selected>Select your level of study</option>' +
+              lvlField.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
           }
         }
 
@@ -939,6 +963,8 @@
         const selectedFacultyText = facultyOption.textContent;
         const color = facultyOption.getAttribute('data-color') || '#FF4757';
         const dept = document.getElementById('department').value.trim();
+        const levelSelect = document.getElementById('levelOfStudy');
+        const level = levelSelect && levelSelect.value ? levelSelect.value : '100 Level';
         const looking = (document.getElementById('lookingForwardTo')?.value || '').trim();
 
         // Generate unique ticket number like FX26-YJZM8A
@@ -962,6 +988,7 @@
           ticket_id: ticketId,
           full_name: name,
           phone_number: phone,
+          level_of_study: level,
           faculty: selectedFacultyText,
           department: dept,
           looking_forward_to: looking,
@@ -969,26 +996,37 @@
           assigned_team: teamName
         };
 
-        // Insert into Supabase database asynchronously so ticket renders instantly
+        // Insert into Supabase database asynchronously with resilient schema fallback
         if (supabaseClient) {
           supabaseClient
             .from('picnic_registrations')
             .insert([payload])
             .then(({ error }) => {
-              if (error) console.warn('Supabase insertion notice:', error.message);
-              else console.log('Successfully registered in Supabase:', ticketId);
+              if (error) {
+                console.warn('Supabase insertion notice:', error.message);
+                // If remote DB table does not yet have level_of_study column, retry without it so registration is safely recorded
+                if (error.message && (error.message.includes('level_of_study') || error.code === 'PGRST204')) {
+                  const fallbackPayload = { ...payload };
+                  delete fallbackPayload.level_of_study;
+                  supabaseClient.from('picnic_registrations').insert([fallbackPayload]);
+                }
+              } else {
+                console.log('Successfully registered in Supabase:', ticketId);
+              }
             })
             .catch(dbErr => console.warn('Database network request error:', dbErr));
         }
 
         // Populate realistic stub ticket fields
         const tkAttendee = document.getElementById('tkAttendee');
+        const tkLevelSub = document.getElementById('tkLevelSub');
         const tkFaculty = document.getElementById('tkFaculty');
         const tkDate = document.getElementById('tkDate');
         const tkColourVenue = document.getElementById('tkColourVenue');
         const tkTicketNo = document.getElementById('tkTicketNo');
 
         if (tkAttendee) tkAttendee.textContent = name;
+        if (tkLevelSub) tkLevelSub.textContent = `${level}${dept ? ` · ${dept}` : ''}`;
         if (tkFaculty) tkFaculty.textContent = `${selectedFacultyText.replace('Faculty of ', '')} · ${teamName}`;
         if (tkTicketNo) tkTicketNo.textContent = ticketId;
         if (tkDate) tkDate.textContent = 'Sat 26 Sept 12PM & Sun 27 Sept 3PM';
@@ -1061,6 +1099,56 @@
     function closeTicketModal() {
       const modal = document.getElementById('ticketModalOverlay');
       if (modal) modal.classList.remove('active');
+    }
+
+    // Interactive ticket pass preview function
+    function previewTicketView() {
+      const formEl = document.getElementById('formContainer');
+      const ticketCard = document.getElementById('ticketCard');
+      if (formEl) formEl.style.display = 'none';
+      if (ticketCard) ticketCard.classList.add('active');
+
+      const tkAttendee = document.getElementById('tkAttendee');
+      const tkLevelSub = document.getElementById('tkLevelSub');
+      const tkFaculty = document.getElementById('tkFaculty');
+      const tkTicketNo = document.getElementById('tkTicketNo');
+      const tkDate = document.getElementById('tkDate');
+      const tkColourVenue = document.getElementById('tkColourVenue');
+
+      if (tkAttendee) tkAttendee.textContent = 'Chinedu Okafor';
+      if (tkLevelSub) tkLevelSub.textContent = '100 Level · Computer Science';
+      if (tkFaculty) tkFaculty.textContent = 'Physical Sciences · Team Blue';
+      if (tkTicketNo) tkTicketNo.textContent = 'FX26-DEMO01';
+      if (tkDate) tkDate.textContent = 'Sat 26 Sept 12PM & Sun 27 Sept 3PM';
+      if (tkColourVenue) tkColourVenue.textContent = 'CEDR Field (Sat) & PAA (Sun)';
+
+      const uccTeamEl = document.getElementById('uccTeamName');
+      const uccDescEl = document.getElementById('uccDesc');
+      const uccCardEl = document.getElementById('userColorCard');
+      if (uccTeamEl) {
+        uccTeamEl.textContent = 'Team Blue';
+        uccTeamEl.style.color = '#2E9CFF';
+      }
+      if (uccCardEl) uccCardEl.style.borderColor = '#2E9CFF';
+      if (uccDescEl) {
+        uccDescEl.innerHTML = 'Your faculty (<strong style="color:var(--paper);">Physical Sciences</strong>) is repping <strong style="color:#2E9CFF;">Blue</strong>! Wear your team colour to CEDR Field this Saturday, 26 September at 12:00 PM for the Colour Picnic.';
+      }
+
+      function renderBarcode(containerId) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        el.innerHTML = '';
+        const heights = [14, 22, 10, 24, 18, 12, 24, 16, 20, 10, 22, 18, 14, 24, 12];
+        heights.forEach(h => {
+          const bar = document.createElement('span');
+          bar.style.height = `${h}px`;
+          el.appendChild(bar);
+        });
+      }
+      renderBarcode('tkBarcode1');
+      renderBarcode('tkBarcode2');
+      wireWhatsAppShare('FX26-DEMO01');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Render Ticket Element to High-Res Canvas
