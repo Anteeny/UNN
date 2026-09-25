@@ -22,15 +22,27 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   :root{
-    --ink:#16161A;
-    --paper:#FBF9F5;
-    --red:#FF4757;
-    --amber:#FFB800;
-    --sky:#2E9CFF;
-    --grass:#3FD68A;
-    --violet:#A66BFF;
-    --tangerine:#FF8C42;
-    --max:640px;
+    /* 10-Color Palette System */
+    --red: #FF4757;
+    --orange: #FF8C42;
+    --yellow: #FFB800;
+    --pink: #FF6584;
+    --blue: #2E9CFF;
+    --green: #3FD68A;
+    --purple: #A66BFF;
+    --white: #FBF9F5;
+    --black: #16161A;
+    --brown: #8D5B4C;
+
+    /* Semantic & Legacy Mappings (Preserving Visual Continuity) */
+    --ink: var(--black);
+    --paper: var(--white);
+    --amber: var(--yellow);
+    --sky: var(--blue);
+    --grass: var(--green);
+    --violet: var(--purple);
+    --tangerine: var(--orange);
+    --max: 640px;
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -307,7 +319,7 @@
 
   /* RIGHT: Yellow ticket stub with notches & barcode */
   .et-stub{
-    background:#FDB913;
+    background:var(--yellow);
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -433,8 +445,8 @@
     justify-content:center;
     gap:10px;
     padding:16px 24px;
-    background:linear-gradient(135deg, #FFB800, #FF8C42);
-    color:var(--ink);
+    background:linear-gradient(135deg, var(--yellow), var(--orange));
+    color:var(--black);
     font-family:'Work Sans', sans-serif;
     font-size:15px;
     font-weight:800;
@@ -611,8 +623,8 @@
     align-items:center;
     justify-content:center;
     padding:12px 28px;
-    background:linear-gradient(135deg, #FFB800, #FF8C42);
-    color:var(--ink);
+    background:linear-gradient(135deg, var(--yellow), var(--orange));
+    color:var(--black);
     font-family:'Work Sans', sans-serif;
     font-size:14px;
     font-weight:800;
@@ -700,23 +712,23 @@
           <label class="form-label" for="faculty">Faculty</label>
           <select id="faculty" class="form-select" required>
             <option value="" disabled selected>Select your faculty</option>
-            <option value="Agriculture" data-color="#3FD68A">Faculty of Agriculture</option>
-            <option value="Arts" data-color="#FFB800">Faculty of Arts</option>
-            <option value="Basic Medical Sciences" data-color="#FF4757">Faculty of Basic Medical Sciences</option>
-            <option value="Biological Sciences" data-color="#2E9CFF">Faculty of Biological Sciences</option>
+            <option value="Agriculture" data-color="#FFFFFF">Faculty of Agriculture</option>
+            <option value="Arts" data-color="#8D5B4C">Faculty of Arts</option>
+            <option value="Basic Medical Sciences" data-color="#FFB800">Faculty of Basic Medical Sciences</option>
+            <option value="Biological Sciences" data-color="#3FD68A">Faculty of Biological Sciences</option>
             <option value="Business Administration" data-color="#FF8C42">Faculty of Business Administration</option>
             <option value="Dentistry" data-color="#A66BFF">Faculty of Dentistry</option>
-            <option value="Education" data-color="#FFB800">Faculty of Education</option>
+            <option value="Education" data-color="#FF8C42">Faculty of Education</option>
             <option value="Engineering" data-color="#FF4757">Faculty of Engineering</option>
-            <option value="Environmental Studies" data-color="#3FD68A">Faculty of Environmental Studies</option>
-            <option value="Health Sciences & Technology" data-color="#2E9CFF">Faculty of Health Sciences & Technology</option>
+            <option value="Environmental Studies" data-color="#8D5B4C">Faculty of Environmental Studies</option>
+            <option value="Health Sciences & Technology" data-color="#A66BFF">Faculty of Health Sciences & Technology</option>
             <option value="Law" data-color="#A66BFF">Faculty of Law</option>
-            <option value="Medical Sciences" data-color="#FF4757">Faculty of Medical Sciences</option>
+            <option value="Medical Sciences" data-color="#FFB800">Faculty of Medical Sciences</option>
             <option value="Pharmaceutical Sciences" data-color="#3FD68A">Faculty of Pharmaceutical Sciences</option>
             <option value="Physical Sciences" data-color="#2E9CFF">Faculty of Physical Sciences</option>
-            <option value="Social Sciences" data-color="#FF8C42">Faculty of Social Sciences</option>
+            <option value="Social Sciences" data-color="#FF6584">Faculty of Social Sciences</option>
             <option value="Veterinary Medicine" data-color="#3FD68A">Faculty of Veterinary Medicine</option>
-            <option value="Vocational & Technical Education" data-color="#FFB800">Faculty of Vocational & Technical Education</option>
+            <option value="Vocational & Technical Education" data-color="#FF8C42">Faculty of Vocational & Technical Education</option>
           </select>
         </div>
 
@@ -938,12 +950,12 @@
         const ticketId = `FX26-${randomCode}`;
 
         // Find color team name
-        let teamName = 'Allies';
+        let teamName = 'Team Red';
         if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
           const matchedGroup = globalEventData.facultyColorGroups.find(g => 
             g.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase())
           );
-          if (matchedGroup) teamName = `${matchedGroup.colorName} (${matchedGroup.team})`;
+          if (matchedGroup) teamName = matchedGroup.team;
         }
 
         const payload = {
@@ -992,7 +1004,7 @@
           );
           if (matchedGroup) {
             matchedColorName = matchedGroup.colorName;
-            matchedTeamName = `${matchedGroup.team} (${matchedGroup.colorName})`;
+            matchedTeamName = matchedGroup.team;
             matchedHex = matchedGroup.hex || color;
           }
         }

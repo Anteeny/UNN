@@ -10,17 +10,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   :root{
-    --ink:#121216;
-    --card-bg:#1A1A22;
-    --card-border:rgba(255,255,255,0.12);
-    --paper:#FBF9F5;
-    --red:#FF4757;
-    --amber:#FFB800;
-    --sky:#2E9CFF;
-    --grass:#3FD68A;
-    --violet:#A66BFF;
+    /* 10-Color Palette System */
+    --red: #FF4757;
+    --orange: #FF8C42;
+    --yellow: #FFB800;
+    --pink: #FF6584;
+    --blue: #2E9CFF;
+    --green: #3FD68A;
+    --purple: #A66BFF;
+    --white: #FBF9F5;
+    --black: #16161A;
+    --brown: #8D5B4C;
+
+    /* Theme and Legacy Aliases */
+    --ink: var(--black);
+    --paper: var(--white);
+    --card-bg: #1A1A22;
+    --card-border: rgba(255,255,255,0.12);
+    --amber: var(--yellow);
+    --sky: var(--blue);
+    --grass: var(--green);
+    --violet: var(--purple);
+    --tangerine: var(--orange);
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -84,12 +98,12 @@
     margin-bottom:16px;
     transition:border-color 0.2s;
   }
-  .pin-input:focus{ border-color:var(--amber); }
+  .pin-input:focus{ border-color:var(--yellow); }
   .pin-btn{
     width:100%;
     padding:14px;
-    background:linear-gradient(135deg, var(--amber), #FF8C42);
-    color:var(--ink);
+    background:linear-gradient(135deg, var(--yellow), var(--orange));
+    color:var(--black);
     border:none;
     border-radius:12px;
     font-size:16px;
@@ -115,7 +129,7 @@
     text-transform:uppercase;
     letter-spacing:0.02em;
   }
-  .admin-logo h1 span{ color:var(--sky); }
+  .admin-logo h1 span{ color:var(--blue); }
   .admin-sub{ font-size:13px; color:#A09E96; }
   .admin-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 
@@ -133,9 +147,9 @@
     text-decoration:none;
   }
   .btn:hover{ opacity:0.9; transform:translateY(-1px); }
-  .btn-primary{ background:linear-gradient(135deg, var(--amber), #FF8C42); color:var(--ink); }
-  .btn-green{ background:#25D366; color:#fff; }
-  .btn-ghost{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:var(--paper); }
+  .btn-primary{ background:linear-gradient(135deg, var(--yellow), var(--orange)); color:var(--black); }
+  .btn-green{ background:linear-gradient(135deg, var(--green), #2db873); color:var(--black); }
+  .btn-ghost{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:var(--white); }
 
   /* Stats Grid */
   .stats-grid{
@@ -157,10 +171,16 @@
     position:absolute;
     top:0; left:0; width:4px; height:100%;
   }
-  .stat-card.c-amber::after{ background:var(--amber); }
-  .stat-card.c-sky::after{ background:var(--sky); }
-  .stat-card.c-grass::after{ background:var(--grass); }
   .stat-card.c-red::after{ background:var(--red); }
+  .stat-card.c-orange::after{ background:var(--orange); }
+  .stat-card.c-yellow::after, .stat-card.c-amber::after{ background:var(--yellow); }
+  .stat-card.c-pink::after{ background:var(--pink); }
+  .stat-card.c-blue::after, .stat-card.c-sky::after{ background:var(--blue); }
+  .stat-card.c-green::after, .stat-card.c-grass::after{ background:var(--green); }
+  .stat-card.c-purple::after, .stat-card.c-violet::after{ background:var(--purple); }
+  .stat-card.c-white::after{ background:var(--white); }
+  .stat-card.c-black::after{ background:var(--black); }
+  .stat-card.c-brown::after{ background:var(--brown); }
 
   .stat-lbl{ font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:#A09E96; margin-bottom:6px; }
   .stat-val{ font-family:'Anton', sans-serif; font-size:38px; line-height:1; letter-spacing:0.02em; }
@@ -344,6 +364,229 @@
   }
 
   .loading-row{ text-align:center; padding:40px; font-weight:700; color:#A09E96; }
+
+  /* Distribution Section */
+  .distribution-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .distribution-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .dist-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:14px;
+  }
+  .dist-item{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:12px;
+    padding:14px;
+    border-top:3.5px solid var(--team-color, #fff);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    transition:transform 0.15s, background 0.15s;
+  }
+  .dist-item:hover{
+    background:rgba(255,255,255,0.06);
+    transform:translateY(-2px);
+  }
+  .dist-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .dist-team-title{
+    font-weight:800;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .dist-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+  }
+  .dist-count{
+    font-family:'Anton', sans-serif;
+    font-size:18px;
+    letter-spacing:0.02em;
+  }
+  .dist-faculties{
+    font-size:11.5px;
+    color:#A09E96;
+    line-height:1.4;
+  }
+  .dist-bar-bg{
+    background:rgba(255,255,255,0.08);
+    height:5px;
+    border-radius:100px;
+    overflow:hidden;
+    margin-top:auto;
+  }
+  .dist-bar-fill{
+    height:100%;
+    border-radius:100px;
+    transition:width 0.4s ease;
+  }
+
+  /* Social Chart Modal */
+  .chart-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.88);
+    backdrop-filter:blur(10px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .chart-modal.active{ display:flex; }
+  .chart-box{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:24px;
+    max-width:820px;
+    width:100%;
+    padding:26px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.9);
+    max-height:92vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .chart-scroll{
+    overflow-y:auto;
+    padding-right:6px;
+    margin-bottom:18px;
+  }
+  /* The High-Res Social Flyer Card */
+  .social-flyer-card{
+    background:radial-gradient(circle at 85% 15%, #241d33 0%, #121217 55%, #0a0a0e 100%);
+    border:2px solid rgba(255,255,255,0.18);
+    border-radius:22px;
+    padding:34px 28px;
+    color:#fff;
+    box-shadow:0 24px 60px rgba(0,0,0,0.7);
+    position:relative;
+    overflow:hidden;
+  }
+  .social-flyer-card::after{
+    content:'';
+    position:absolute;
+    bottom:-100px; left:-80px;
+    width:260px; height:260px;
+    background:radial-gradient(circle, rgba(63,214,138,0.15), transparent 70%);
+    pointer-events:none;
+  }
+  .flyer-brand{
+    text-align:center;
+    margin-bottom:24px;
+    padding-bottom:18px;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+  }
+  .flyer-tag{
+    display:inline-block;
+    padding:5px 14px;
+    border-radius:100px;
+    font-size:11.5px;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    background:linear-gradient(90deg, #FF6584, #FFB800);
+    color:#16161A;
+    margin-bottom:10px;
+  }
+  .flyer-title{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(24px, 4vw, 32px);
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    line-height:1.15;
+  }
+  .flyer-title span{
+    background:linear-gradient(135deg, #FF8C42, #FFB800, #3FD68A);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .flyer-subtitle{
+    font-size:13.5px;
+    color:#D0CFC9;
+    max-width:540px;
+    margin:0 auto;
+  }
+  .flyer-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+    gap:12px;
+    margin-bottom:24px;
+  }
+  .flyer-item{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    border-left:5px solid var(--t-col);
+    border-radius:10px;
+    padding:12px 14px;
+  }
+  .flyer-team-name{
+    font-family:'Anton', sans-serif;
+    font-size:15px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    color:var(--t-col);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .flyer-faculties{
+    font-size:12px;
+    color:#E0DFD8;
+    line-height:1.45;
+  }
+  .flyer-faculties div{
+    margin-bottom:2px;
+  }
+  .flyer-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,0.12);
+    font-size:12px;
+  }
+  .flyer-meta-item{
+    color:#B8B6AD;
+  }
+  .flyer-meta-item strong{
+    color:#fff;
+  }
+  .flyer-cta-badge{
+    background:linear-gradient(135deg, #FF4757, #FF8C42);
+    color:#fff;
+    padding:6px 14px;
+    border-radius:100px;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.02em;
+  }
 </style>
 </head>
 <body>
@@ -370,6 +613,7 @@
       </div>
       <div class="admin-actions">
         <button type="button" class="btn btn-ghost" onclick="fetchRegistrations()">🔄 Refresh</button>
+        <a href="#colourChartSection" class="btn" style="background:linear-gradient(135deg, var(--purple), var(--blue)); color:#fff;">🎨 View Colour Chart</a>
         <button type="button" class="btn btn-green" onclick="openBroadcastModal()">📢 Broadcast Tool</button>
         <button type="button" class="btn btn-primary" onclick="exportCSV()">📥 Export CSV</button>
         <a href="./" class="btn btn-ghost">← Homepage</a>
@@ -397,6 +641,66 @@
         <div class="stat-lbl">Leading Faculty</div>
         <div class="stat-val" style="font-size:22px; margin-top:6px;" id="topFacultyName">Loading...</div>
         <div class="stat-detail" id="topFacultyCount">0 Attendees</div>
+      </div>
+    </div>
+
+    <!-- Real-time Faculty Colour Distribution Widget -->
+    <div class="distribution-card">
+      <div class="distribution-head">
+        <div>
+          <h3 style="font-family:'Anton', sans-serif; font-size:20px; text-transform:uppercase; letter-spacing:0.02em;">Live Registration by Colour Team</h3>
+          <p style="font-size:12.5px; color:#A09E96;">Live student registrations across the official 10-Color Palette</p>
+        </div>
+        <div>
+          <a href="#colourChartSection" class="btn btn-ghost" style="font-size:12.5px;">↓ View Social Flyer Card</a>
+        </div>
+      </div>
+      <div class="dist-grid" id="teamDistributionGrid">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- Dedicated Faculty Colour Chart Section for Sharing on Socials -->
+    <div class="distribution-card" id="colourChartSection" style="margin-bottom:28px;">
+      <div class="distribution-head">
+        <div>
+          <h3 style="font-family:'Anton', sans-serif; font-size:22px; text-transform:uppercase; letter-spacing:0.02em;">Official Faculty Colour Chart</h3>
+          <p style="font-size:13px; color:#A09E96;">Share this graphic and caption on WhatsApp Status, Instagram, and Group Chats</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" id="btnDownloadChart" onclick="downloadSocialChart()">
+            📥 Download PNG for Socials (HD)
+          </button>
+          <button type="button" class="btn btn-green" onclick="shareWhatsApp()">
+            💬 Share on WhatsApp
+          </button>
+          <button type="button" class="btn btn-ghost" onclick="copySocialCaption()">
+            📋 Copy Caption
+          </button>
+        </div>
+      </div>
+
+      <!-- Rendered Social Flyer Card Target -->
+      <div class="social-flyer-card" id="socialFlyerCard">
+        <div class="flyer-brand">
+          <span class="flyer-tag">Official Event Guide &bull; UNN 2026</span>
+          <h2 class="flyer-title">Freshers' Xperience <span>Colour Chart</span></h2>
+          <p class="flyer-subtitle">Rep your official faculty colour at CEDR Field &amp; secure your free food pass!</p>
+        </div>
+
+        <div class="flyer-grid" id="flyerGridTarget">
+          <!-- Populated dynamically with all 9 active color teams and faculties -->
+        </div>
+
+        <div class="flyer-footer">
+          <div class="flyer-meta-item">
+            📅 <strong>Sat 12PM:</strong> Colour Picnic @ CEDR Field<br>
+            📅 <strong>Sun 3PM:</strong> Main FX26 @ PAA Auditorium
+          </div>
+          <div class="flyer-cta-badge">
+            🎟️ 100% Free Food Pass &bull; fx26.ncfunn.site
+          </div>
+        </div>
       </div>
     </div>
 
@@ -473,6 +777,95 @@
 
     let allAttendees = [];
 
+    // 10-Color Palette & Canonical Faculty Mappings
+    const facultyColorMap = {
+      'Faculty of Agriculture': { team: 'Team White', color: '#FFFFFF', colorName: 'White' },
+      'Faculty of Arts': { team: 'Team Brown', color: '#8D5B4C', colorName: 'Brown' },
+      'Faculty of Basic Medical Sciences': { team: 'Team Yellow', color: '#FFB800', colorName: 'Yellow' },
+      'Faculty of Biological Sciences': { team: 'Team Green', color: '#3FD68A', colorName: 'Green' },
+      'Faculty of Business Administration': { team: 'Team Orange', color: '#FF8C42', colorName: 'Orange' },
+      'Faculty of Dentistry': { team: 'Team Purple', color: '#A66BFF', colorName: 'Purple' },
+      'Faculty of Education': { team: 'Team Orange', color: '#FF8C42', colorName: 'Orange' },
+      'Faculty of Engineering': { team: 'Team Red', color: '#FF4757', colorName: 'Red' },
+      'Faculty of Environmental Studies': { team: 'Team Brown', color: '#8D5B4C', colorName: 'Brown' },
+      'Faculty of Health Sciences & Technology': { team: 'Team Purple', color: '#A66BFF', colorName: 'Purple' },
+      'Faculty of Law': { team: 'Team Purple', color: '#A66BFF', colorName: 'Purple' },
+      'Faculty of Medical Sciences': { team: 'Team Yellow', color: '#FFB800', colorName: 'Yellow' },
+      'Faculty of Pharmaceutical Sciences': { team: 'Team Green', color: '#3FD68A', colorName: 'Green' },
+      'Faculty of Physical Sciences': { team: 'Team Blue', color: '#2E9CFF', colorName: 'Blue' },
+      'Faculty of Social Sciences': { team: 'Team Pink', color: '#FF6584', colorName: 'Pink' },
+      'Faculty of Veterinary Medicine': { team: 'Team Green', color: '#3FD68A', colorName: 'Green' },
+      'Faculty of Vocational & Technical Education': { team: 'Team Orange', color: '#FF8C42', colorName: 'Orange' }
+    };
+
+    const teamGroups = [
+      {
+        name: 'Team Red',
+        color: '#FF4757',
+        colorName: 'Red',
+        faculties: ['Faculty of Engineering']
+      },
+      {
+        name: 'Team Orange',
+        color: '#FF8C42',
+        colorName: 'Orange',
+        faculties: ['Faculty of Education', 'Faculty of Vocational & Technical Education', 'Faculty of Business Administration']
+      },
+      {
+        name: 'Team Yellow',
+        color: '#FFB800',
+        colorName: 'Yellow',
+        faculties: ['Faculty of Basic Medical Sciences', 'Faculty of Medical Sciences']
+      },
+      {
+        name: 'Team Pink',
+        color: '#FF6584',
+        colorName: 'Pink',
+        faculties: ['Faculty of Social Sciences']
+      },
+      {
+        name: 'Team Blue',
+        color: '#2E9CFF',
+        colorName: 'Blue',
+        faculties: ['Faculty of Physical Sciences']
+      },
+      {
+        name: 'Team Green',
+        color: '#3FD68A',
+        colorName: 'Green',
+        faculties: ['Faculty of Biological Sciences', 'Faculty of Pharmaceutical Sciences', 'Faculty of Veterinary Medicine']
+      },
+      {
+        name: 'Team Purple',
+        color: '#A66BFF',
+        colorName: 'Purple',
+        faculties: ['Faculty of Health Sciences & Technology', 'Faculty of Law', 'Faculty of Dentistry']
+      },
+      {
+        name: 'Team White',
+        color: '#FFFFFF',
+        colorName: 'White',
+        faculties: ['Faculty of Agriculture']
+      },
+      {
+        name: 'Team Brown',
+        color: '#8D5B4C',
+        colorName: 'Brown',
+        faculties: ['Faculty of Arts', 'Faculty of Environmental Studies']
+      }
+    ];
+
+    function normalizeFaculty(f) {
+      if (!f) return '';
+      return f.startsWith('Faculty of ') ? f : 'Faculty of ' + f;
+    }
+
+    function getFacultyInfo(facultyName) {
+      const full = normalizeFaculty(facultyName);
+      if (facultyColorMap[full]) return facultyColorMap[full];
+      return { team: 'Team General', color: '#FF8C42', colorName: 'Orange' };
+    }
+
     // PIN Authentication (Default: 2026)
     function verifyPin() {
       const pin = document.getElementById('pinInput').value.trim();
@@ -512,6 +905,8 @@
         if (error) throw error;
         allAttendees = data || [];
         updateStats();
+        updateDistributionGrid();
+        renderFlyerGrid();
         populateFilterDropdowns();
         renderTable(allAttendees);
       } catch (err) {
@@ -522,7 +917,8 @@
 
     // Update Top Counters
     function updateStats() {
-      document.getElementById('totalCount').textContent = allAttendees.length;
+      const total = allAttendees.length;
+      document.getElementById('totalCount').textContent = total;
       const sat = allAttendees.filter(a => a.checked_in_saturday).length;
       const sun = allAttendees.filter(a => a.checked_in_sunday).length;
       document.getElementById('satCount').textContent = sat;
@@ -531,7 +927,10 @@
       // Find top faculty
       const counts = {};
       allAttendees.forEach(a => {
-        if (a.faculty) counts[a.faculty] = (counts[a.faculty] || 0) + 1;
+        if (a.faculty) {
+          const norm = normalizeFaculty(a.faculty);
+          counts[norm] = (counts[norm] || 0) + 1;
+        }
       });
       let topF = 'N/A';
       let maxC = 0;
@@ -542,33 +941,64 @@
       document.getElementById('topFacultyCount').textContent = `${maxC} Registrations`;
     }
 
+    // Render Real-time Faculty Colour Distribution Widget
+    function updateDistributionGrid() {
+      const grid = document.getElementById('teamDistributionGrid');
+      if (!grid) return;
+
+      const total = allAttendees.length || 1;
+      const teamCounts = {};
+
+      allAttendees.forEach(a => {
+        const info = getFacultyInfo(a.faculty);
+        teamCounts[info.team] = (teamCounts[info.team] || 0) + 1;
+      });
+
+      grid.innerHTML = teamGroups.map(grp => {
+        const count = teamCounts[grp.name] || 0;
+        const pct = Math.round((count / total) * 100);
+        const facList = grp.faculties.map(f => f.replace('Faculty of ', '')).join(' • ');
+
+        return `
+          <div class="dist-item" style="--team-color:${grp.color};">
+            <div class="dist-header">
+              <span class="dist-team-title">
+                <span class="dist-dot" style="background:${grp.color};"></span>
+                <span style="color:${grp.color};">${grp.name}</span>
+              </span>
+              <span class="dist-count">${count} <span style="font-size:11px; color:#A09E96; font-family:'Work Sans', sans-serif;">(${pct}%)</span></span>
+            </div>
+            <div class="dist-faculties">${escapeHtml(facList)}</div>
+            <div class="dist-bar-bg">
+              <div class="dist-bar-fill" style="width:${Math.max(pct, count > 0 ? 5 : 0)}%; background:${grp.color};"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     // Populate Filter Dropdowns
     function populateFilterDropdowns() {
-      const facSet = new Set();
-      const teamSet = new Set();
-      allAttendees.forEach(a => {
-        if (a.faculty) facSet.add(a.faculty);
-        if (a.assigned_team) teamSet.add(a.assigned_team);
-      });
-
       const facSelect = document.getElementById('facultyFilter');
-      facSelect.innerHTML = '<option value="">All Faculties</option>';
-      [...facSet].sort().forEach(f => {
-        facSelect.innerHTML += `<option value="${f}">${f}</option>`;
-      });
-
       const teamSelect = document.getElementById('teamFilter');
+      const bSelect = document.getElementById('broadcastTeamSelect');
+
+      facSelect.innerHTML = '<option value="">All Faculties</option>';
       teamSelect.innerHTML = '<option value="">All Teams &amp; Colours</option>';
-      [...teamSet].sort().forEach(t => {
-        teamSelect.innerHTML += `<option value="${t}">${t}</option>`;
+      bSelect.innerHTML = '<option value="all">All Registered Students</option>';
+
+      // Add all teams to team filter & broadcast
+      teamGroups.forEach(grp => {
+        teamSelect.innerHTML += `<option value="${grp.name}">${grp.name} (${grp.colorName})</option>`;
+        bSelect.innerHTML += `<option value="team:${grp.name}">📢 All ${grp.name} (${grp.colorName})</option>`;
       });
 
-      // Broadcast dropdown
-      const bSelect = document.getElementById('broadcastTeamSelect');
-      bSelect.innerHTML = '<option value="all">All Registered Students</option>';
-      [...facSet].sort().forEach(f => {
+      // Add all 17 faculties
+      Object.keys(facultyColorMap).sort().forEach(f => {
+        facSelect.innerHTML += `<option value="${f}">${f}</option>`;
         bSelect.innerHTML += `<option value="${f}">${f}</option>`;
       });
+
       updateBroadcastPreview();
     }
 
@@ -585,8 +1015,9 @@
         const cleanPhone = phone.replace(/[\s\-\+]/g, '');
         const waPhone = cleanPhone.startsWith('0') ? '234' + cleanPhone.substring(1) : cleanPhone;
         
-        const color = a.assigned_color || '#FF4757';
-        const team = a.assigned_team || 'Team';
+        const info = getFacultyInfo(a.faculty);
+        const color = info.color || a.assigned_color || '#FF4757';
+        const team = info.team || a.assigned_team || 'Team';
         const facultyShort = (a.faculty || '').replace('Faculty of ', '');
 
         // Prefilled personal message for WhatsApp
@@ -606,7 +1037,7 @@
             </td>
             <td>
               <div style="font-weight:600; margin-bottom:4px;">${escapeHtml(facultyShort)}</div>
-              <span class="team-pill" style="border-color:${color}44;">
+              <span class="team-pill" style="border-color:${color}55;">
                 <span class="team-dot" style="background:${color};"></span>
                 <span style="color:${color};">${escapeHtml(team)}</span>
               </span>
@@ -645,6 +1076,7 @@
         const item = allAttendees.find(a => a.id === id);
         if (item) item[col] = newVal;
         updateStats();
+        updateDistributionGrid();
         filterData();
       } catch (err) {
         alert('Check-in update failed: ' + err.message);
@@ -659,6 +1091,9 @@
       const status = document.getElementById('checkinFilter').value;
 
       const filtered = allAttendees.filter(a => {
+        const info = getFacultyInfo(a.faculty);
+        const normFac = normalizeFaculty(a.faculty);
+
         const matchesQuery = !q || 
           (a.full_name && a.full_name.toLowerCase().includes(q)) ||
           (a.phone_number && a.phone_number.includes(q)) ||
@@ -666,8 +1101,8 @@
           (a.faculty && a.faculty.toLowerCase().includes(q)) ||
           (a.department && a.department.toLowerCase().includes(q));
 
-        const matchesFac = !fac || a.faculty === fac;
-        const matchesTeam = !team || a.assigned_team === team;
+        const matchesFac = !fac || normFac === fac || a.faculty === fac;
+        const matchesTeam = !team || info.team === team || a.assigned_team === team;
 
         let matchesStatus = true;
         if (status === 'sat') matchesStatus = a.checked_in_saturday === true;
@@ -688,18 +1123,21 @@
       }
 
       const headers = ['Ticket ID', 'Full Name', 'Phone Number', 'Faculty', 'Department', 'Assigned Colour', 'Assigned Team', 'Sat Check-In', 'Sun Check-In', 'Registered At'];
-      const rows = allAttendees.map(a => [
-        `"${a.ticket_id || ''}"`,
-        `"${(a.full_name || '').replace(/"/g, '""')}"`,
-        `"${a.phone_number || ''}"`,
-        `"${(a.faculty || '').replace(/"/g, '""')}"`,
-        `"${(a.department || '').replace(/"/g, '""')}"`,
-        `"${a.assigned_color || ''}"`,
-        `"${(a.assigned_team || '').replace(/"/g, '""')}"`,
-        a.checked_in_saturday ? 'YES' : 'NO',
-        a.checked_in_sunday ? 'YES' : 'NO',
-        `"${a.created_at || ''}"`
-      ]);
+      const rows = allAttendees.map(a => {
+        const info = getFacultyInfo(a.faculty);
+        return [
+          `"${a.ticket_id || ''}"`,
+          `"${(a.full_name || '').replace(/"/g, '""')}"`,
+          `"${a.phone_number || ''}"`,
+          `"${(a.faculty || '').replace(/"/g, '""')}"`,
+          `"${(a.department || '').replace(/"/g, '""')}"`,
+          `"${info.color || a.assigned_color || ''}"`,
+          `"${info.team || a.assigned_team || ''}"`,
+          a.checked_in_saturday ? 'YES' : 'NO',
+          a.checked_in_sunday ? 'YES' : 'NO',
+          `"${a.created_at || ''}"`
+        ];
+      });
 
       const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
       const encodedUri = encodeURI(csvContent);
@@ -720,21 +1158,23 @@
       document.getElementById('broadcastModal').classList.remove('active');
     }
 
-    function updateBroadcastPreview() {
+    function getBroadcastFilteredList() {
       const selected = document.getElementById('broadcastTeamSelect').value;
-      const filtered = selected === 'all' 
-        ? allAttendees 
-        : allAttendees.filter(a => a.faculty === selected);
+      if (selected === 'all') return allAttendees;
+      if (selected.startsWith('team:')) {
+        const targetTeam = selected.replace('team:', '');
+        return allAttendees.filter(a => getFacultyInfo(a.faculty).team === targetTeam);
+      }
+      return allAttendees.filter(a => normalizeFaculty(a.faculty) === selected || a.faculty === selected);
+    }
 
+    function updateBroadcastPreview() {
+      const filtered = getBroadcastFilteredList();
       document.getElementById('broadcastNumberCount').textContent = filtered.length;
     }
 
     function copyBroadcastNumbers() {
-      const selected = document.getElementById('broadcastTeamSelect').value;
-      const filtered = selected === 'all' 
-        ? allAttendees 
-        : allAttendees.filter(a => a.faculty === selected);
-
+      const filtered = getBroadcastFilteredList();
       const phones = filtered
         .map(a => (a.phone_number || '').replace(/[\s\-\+]/g, ''))
         .filter(Boolean)
@@ -749,6 +1189,132 @@
         alert(`Copied ${phones.length} phone numbers to clipboard! You can paste them directly into WhatsApp Broadcast or SMS.`);
       }).catch(err => {
         prompt('Copy phone numbers below:', phones.join(', '));
+      });
+    }
+
+    // Render Embedded Social Colour Chart Card
+    function renderFlyerGrid() {
+      const flyerTarget = document.getElementById('flyerGridTarget');
+      if (!flyerTarget) return;
+
+      flyerTarget.innerHTML = teamGroups.map(grp => {
+        const listHtml = grp.faculties
+          .map(f => `<div>• ${escapeHtml(f.replace('Faculty of ', ''))}</div>`)
+          .join('');
+
+        return `
+          <div class="flyer-item" style="--t-col:${grp.color};">
+            <div class="flyer-team-name">
+              <span>●</span> ${grp.name}
+            </div>
+            <div class="flyer-faculties">
+              ${listHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Auto-render flyer grid on initial script execution
+    renderFlyerGrid();
+
+    const SOCIAL_CAPTION_TEXT = `🎨 UNN FRESHERS' XPERIENCE 2026 — OFFICIAL FACULTY COLOUR CHART 🎟️🔥
+
+Which team are you repping at CEDR Field? Rep your faculty colour and claim your 100% Free Food Pass!
+
+🔴 TEAM RED
+• Faculty of Engineering
+
+🟠 TEAM ORANGE
+• Faculty of Education
+• Faculty of Vocational & Technical Education
+• Faculty of Business Administration
+
+🟡 TEAM YELLOW
+• Faculty of Medical Sciences
+• Faculty of Basic Medical Sciences
+
+🌸 TEAM PINK
+• Faculty of Social Sciences
+
+🔵 TEAM BLUE
+• Faculty of Physical Sciences
+
+🟢 TEAM GREEN
+• Faculty of Biological Sciences
+• Faculty of Pharmaceutical Sciences
+• Faculty of Veterinary Medicine
+
+🟣 TEAM PURPLE
+• Faculty of Health Sciences & Technology
+• Faculty of Law
+• Faculty of Dentistry
+
+⚪ TEAM WHITE
+• Faculty of Agriculture
+
+🟤 TEAM BROWN
+• Faculty of Arts
+• Faculty of Environmental Studies
+
+━━━━━━━━━━━━━━━━━━━━
+📅 Saturday: Colour Picnic @ CEDR Field (12PM)
+📅 Sunday: Main Freshers' Xperience @ PAA Auditorium (3PM)
+
+🎟️ Register your faculty now & secure free food:
+👉 https://fx26.ncfunn.site
+━━━━━━━━━━━━━━━━━━━━`;
+
+    // Share Directly on WhatsApp
+    function shareWhatsApp() {
+      const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(SOCIAL_CAPTION_TEXT);
+      window.open(waUrl, '_blank');
+    }
+
+    // High-Resolution PNG Generator for Social Media
+    async function downloadSocialChart() {
+      const flyerEl = document.getElementById('socialFlyerCard');
+      const btn = document.getElementById('btnDownloadChart');
+      if (!flyerEl) return;
+
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ Generating HD Flyer...';
+      btn.disabled = true;
+
+      try {
+        if (typeof html2canvas === 'undefined') {
+          throw new Error('html2canvas library not loaded');
+        }
+
+        const canvas = await html2canvas(flyerEl, {
+          scale: 2.5,
+          useCORS: true,
+          backgroundColor: '#0A0A0E',
+          logging: false
+        });
+
+        const imageUri = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `UNN_FX26_Official_Faculty_Colour_Chart_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = imageUri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.error('Flyer download error:', err);
+        alert('Could not generate image automatically. You can take a screenshot of the chart!');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // Copy Social Post Caption
+    function copySocialCaption() {
+      navigator.clipboard.writeText(SOCIAL_CAPTION_TEXT).then(() => {
+        alert('📋 Copied Official Social Media Caption to clipboard! You can paste it into WhatsApp Status, Groups, or Instagram.');
+      }).catch(() => {
+        prompt('Copy caption below:', SOCIAL_CAPTION_TEXT);
       });
     }
 
