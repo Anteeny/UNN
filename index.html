@@ -1512,12 +1512,19 @@
             </ul>
           </div>
 
-          <!-- TEAM YELLOW -->
+          <!-- BASIC MEDICAL SCIENCES -->
+          <div class="summary-item" style="--team-col:#FFB800;">
+            <div class="summary-team-title">● Team Yellow</div>
+            <ul class="summary-faculties">
+              <li>Faculty of Basic Medical Sciences</li>
+            </ul>
+          </div>
+
+          <!-- MEDICAL SCIENCES -->
           <div class="summary-item" style="--team-col:#FFB800;">
             <div class="summary-team-title">● Team Yellow</div>
             <ul class="summary-faculties">
               <li>Faculty of Medical Sciences</li>
-              <li>Faculty of Basic Medical Sciences</li>
             </ul>
           </div>
 
@@ -1742,13 +1749,23 @@
       try {
         const { data, error } = await supabaseClient
           .from('picnic_registrations')
-          .select('faculty');
+          .select('faculty, phone_number');
 
         if (error) throw error;
 
-        // Group counts by faculty
+        // Group counts by faculty with phone number deduplication
+        const seenPhones = new Set();
         const counts = {};
         (data || []).forEach(r => {
+          let p = (r.phone_number || '').replace(/[\s\-\+]/g, '');
+          if (p.startsWith('0')) p = '234' + p.substring(1);
+          else if (p.length === 10) p = '234' + p;
+
+          if (p) {
+            if (seenPhones.has(p)) return; // Skip duplicate submission
+            seenPhones.add(p);
+          }
+
           if (r.faculty) {
             counts[r.faculty] = (counts[r.faculty] || 0) + 1;
           }

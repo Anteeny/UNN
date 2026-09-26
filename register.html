@@ -706,6 +706,7 @@
         <div class="form-group">
           <label class="form-label" for="phoneNumber">Phone Number</label>
           <input type="tel" id="phoneNumber" class="form-input" placeholder="e.g. 08012345678" required>
+          <div id="phoneNotice" style="display:none; margin-top:8px; padding:9px 12px; background:rgba(255,184,0,0.12); border:1px solid rgba(255,184,0,0.35); border-radius:8px; font-size:12px; color:var(--yellow); line-height:1.4;"></div>
         </div>
 
         <div class="form-group">
@@ -824,7 +825,7 @@
       </div>
       <!-- /E-TICKET -->
 
-      <div class="ticket-success-msg">
+      <div class="ticket-success-msg" id="ticketSuccessMsg">
         🎉 Pass Confirmed! Save your e-ticket image or screenshot it to present at CEDR Field (Saturday) &amp; PAA (Sunday) for entry and free food.
       </div>
 
@@ -936,6 +937,51 @@
       }
     })();
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Phone input live duplicate check on blur
+    const phoneInputEl = document.getElementById('phoneNumber');
+    const phoneNoticeEl = document.getElementById('phoneNotice');
+    if (phoneInputEl && phoneNoticeEl) {
+      phoneInputEl.addEventListener('blur', async function () {
+        let p = phoneInputEl.value.trim().replace(/[\s\-\+]/g, '');
+        if (p.startsWith('0')) p = '234' + p.substring(1);
+        else if (p.length === 10) p = '234' + p;
+
+        if (p.length >= 10 && supabaseClient) {
+          try {
+            const { data: existing } = await supabaseClient
+              .from('picnic_registrations')
+              .select('ticket_id, full_name, faculty')
+              .eq('phone_number', p)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (existing && existing.length > 0) {
+              const reg = existing[0];
+              const facultyLabel = reg.faculty ? ` - ${escapeHtml(reg.faculty)}` : '';
+              phoneNoticeEl.style.display = 'block';
+              phoneNoticeEl.innerHTML = `ℹ️ <strong>Already Registered:</strong> This number is already registered: <strong>${escapeHtml(reg.full_name)}${facultyLabel}</strong>.`;
+            } else {
+              phoneNoticeEl.style.display = 'none';
+            }
+          } catch (e) {
+            phoneNoticeEl.style.display = 'none';
+          }
+        } else {
+          phoneNoticeEl.style.display = 'none';
+        }
+      });
+    }
+
     // Handle Form Submission with Supabase persistence
     const regForm = document.getElementById('picnicRegistrationForm');
     if (regForm) {
@@ -967,54 +1013,92 @@
         const level = levelSelect && levelSelect.value ? levelSelect.value : '100 Level';
         const looking = (document.getElementById('lookingForwardTo')?.value || '').trim();
 
-        // Generate unique ticket number like FX26-YJZM8A
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        let randomCode = '';
-        for (let i = 0; i < 6; i++) {
-          randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        const ticketId = `FX26-${randomCode}`;
-
-        // Find color team name
-        let teamName = 'Team Red';
-        if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
-          const matchedGroup = globalEventData.facultyColorGroups.find(g => 
-            g.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase())
-          );
-          if (matchedGroup) teamName = matchedGroup.team;
-        }
-
-        const payload = {
-          ticket_id: ticketId,
-          full_name: name,
-          phone_number: phone,
-          level_of_study: level,
-          faculty: selectedFacultyText,
-          department: dept,
-          looking_forward_to: looking,
-          assigned_color: color,
-          assigned_team: teamName
-        };
-
-        // Insert into Supabase database asynchronously with resilient schema fallback
+        // Check if this phone number is already registered in Supabase to avoid duplicates
+        let isExisting = false;
+        let existingRecord = null;
         if (supabaseClient) {
-          supabaseClient
-            .from('picnic_registrations')
-            .insert([payload])
-            .then(({ error }) => {
-              if (error) {
-                console.warn('Supabase insertion notice:', error.message);
-                // If remote DB table does not yet have level_of_study column, retry without it so registration is safely recorded
-                if (error.message && (error.message.includes('level_of_study') || error.code === 'PGRST204')) {
-                  const fallbackPayload = { ...payload };
-                  delete fallbackPayload.level_of_study;
-                  supabaseClient.from('picnic_registrations').insert([fallbackPayload]);
+          try {
+            const { data: existing, error: checkErr } = await supabaseClient
+              .from('picnic_registrations')
+              .select('*')
+              .eq('phone_number', phone)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (!checkErr && existing && existing.length > 0) {
+              isExisting = true;
+              existingRecord = existing[0];
+            }
+          } catch (chkErr) {
+            console.warn('Check existing notice:', chkErr);
+          }
+        }
+
+        // Determine ticket details
+        let finalTicketId = '';
+        let finalName = name;
+        let finalFaculty = selectedFacultyText;
+        let finalDept = dept;
+        let finalLevel = level;
+        let finalColor = color;
+        let finalTeam = 'Team Red';
+
+        if (isExisting && existingRecord) {
+          finalTicketId = existingRecord.ticket_id;
+          finalName = existingRecord.full_name || name;
+          finalFaculty = existingRecord.faculty || selectedFacultyText;
+          finalDept = existingRecord.department || dept;
+          finalLevel = existingRecord.level_of_study || existingRecord.study_level || existingRecord.level || level;
+          finalColor = existingRecord.assigned_color || color;
+          finalTeam = existingRecord.assigned_team || 'Team';
+        } else {
+          // Generate unique ticket number like FX26-YJZM8A
+          const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+          let randomCode = '';
+          for (let i = 0; i < 6; i++) {
+            randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          finalTicketId = `FX26-${randomCode}`;
+
+          // Find color team name
+          if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
+            const matchedGroup = globalEventData.facultyColorGroups.find(g => 
+              g.faculties.some(f => f.toLowerCase() === selectedFacultyText.toLowerCase())
+            );
+            if (matchedGroup) finalTeam = matchedGroup.team;
+          }
+
+          const payload = {
+            ticket_id: finalTicketId,
+            full_name: name,
+            phone_number: phone,
+            level_of_study: level,
+            faculty: selectedFacultyText,
+            department: dept,
+            looking_forward_to: looking,
+            assigned_color: color,
+            assigned_team: finalTeam
+          };
+
+          // Insert into Supabase only if new
+          if (supabaseClient) {
+            supabaseClient
+              .from('picnic_registrations')
+              .insert([payload])
+              .then(({ error }) => {
+                if (error) {
+                  console.warn('Supabase insertion notice:', error.message);
+                  if (error.message && (error.message.includes('level_of_study') || error.code === 'PGRST204')) {
+                    const fallbackPayload = { ...payload };
+                    delete fallbackPayload.level_of_study;
+                    supabaseClient.from('picnic_registrations').insert([fallbackPayload]);
+                  }
+                } else {
+                  console.log('Successfully registered in Supabase:', finalTicketId);
                 }
-              } else {
-                console.log('Successfully registered in Supabase:', ticketId);
-              }
-            })
-            .catch(dbErr => console.warn('Database network request error:', dbErr));
+              })
+              .catch(dbErr => console.warn('Database network request error:', dbErr));
+          }
         }
 
         // Populate realistic stub ticket fields
@@ -1025,16 +1109,32 @@
         const tkColourVenue = document.getElementById('tkColourVenue');
         const tkTicketNo = document.getElementById('tkTicketNo');
 
-        if (tkAttendee) tkAttendee.textContent = name;
-        if (tkLevelSub) tkLevelSub.textContent = `${level}${dept ? ` · ${dept}` : ''}`;
-        if (tkFaculty) tkFaculty.textContent = `${selectedFacultyText.replace('Faculty of ', '')} · ${teamName}`;
-        if (tkTicketNo) tkTicketNo.textContent = ticketId;
+        if (tkAttendee) tkAttendee.textContent = finalName;
+        if (tkLevelSub) tkLevelSub.textContent = `${finalLevel}${finalDept ? ` · ${finalDept}` : ''}`;
+        if (tkFaculty) tkFaculty.textContent = `${finalFaculty.replace('Faculty of ', '')} · ${finalTeam}`;
+        if (tkTicketNo) tkTicketNo.textContent = finalTicketId;
         if (tkDate) tkDate.textContent = 'Sat 26 Sept 12PM & Sun 27 Sept 3PM';
         if (tkColourVenue) tkColourVenue.textContent = 'CEDR Field (Sat) & PAA (Sun)';
 
+        // Update notification banner on pass
+        const successMsgEl = document.getElementById('ticketSuccessMsg');
+        if (successMsgEl) {
+          if (isExisting) {
+            successMsgEl.innerHTML = `ℹ️ <strong>Already Registered!</strong> Welcome back, ${escapeHtml(finalName)}. Your pass (<strong>${finalTicketId}</strong>) has been retrieved. You do not need to register again!`;
+            successMsgEl.style.background = 'rgba(255,184,0,0.12)';
+            successMsgEl.style.borderColor = 'var(--yellow)';
+            successMsgEl.style.color = 'var(--yellow)';
+          } else {
+            successMsgEl.innerHTML = `🎉 Pass Confirmed! Save your e-ticket image or screenshot it to present at CEDR Field (Saturday) &amp; PAA (Sunday) for entry and free food.`;
+            successMsgEl.style.background = 'rgba(63,214,138,0.12)';
+            successMsgEl.style.borderColor = 'rgba(63,214,138,0.35)';
+            successMsgEl.style.color = 'var(--grass)';
+          }
+        }
+
         // Populate individual user colour notification
         let matchedColorName = 'Your Team Colour';
-        let matchedTeamName = teamName;
+        let matchedTeamName = finalTeam;
         let matchedHex = color;
         if (globalEventData && Array.isArray(globalEventData.facultyColorGroups)) {
           const matchedGroup = globalEventData.facultyColorGroups.find(g => 
@@ -1062,7 +1162,7 @@
         }
 
         // Store ticketId globally for image generation
-        window.currentTicketId = ticketId;
+        window.currentTicketId = finalTicketId;
 
         // Generate dynamic barcode pattern in stub
         function renderBarcode(containerId) {

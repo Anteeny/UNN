@@ -773,6 +773,8 @@
 
       <select id="checkinFilter" class="filter-select" onchange="filterData()">
         <option value="">All Statuses</option>
+        <option value="unique">Unique Attendees Only</option>
+        <option value="repeat">Repeat / Duplicate Entries Only</option>
         <option value="sat">Checked In (Saturday)</option>
         <option value="sun">Checked In (Sunday)</option>
         <option value="unclaimed">Not Yet Checked In</option>
@@ -971,18 +973,56 @@
       }
     }
 
+    // Helpers: Clean phone number & deduplicate attendees
+    function cleanPhoneNumber(p) {
+      if (!p) return '';
+      let clean = String(p).replace(/[\s\-\+]/g, '');
+      if (clean.startsWith('0')) {
+        clean = '234' + clean.substring(1);
+      } else if (clean.length === 10) {
+        clean = '234' + clean;
+      }
+      return clean;
+    }
+
+    function getUniqueAttendees(list) {
+      if (!list || !Array.isArray(list)) return [];
+      const seen = new Set();
+      const unique = [];
+      list.forEach(a => {
+        const phone = cleanPhoneNumber(a.phone_number);
+        if (phone) {
+          if (!seen.has(phone)) {
+            seen.add(phone);
+            unique.push(a);
+          }
+        } else {
+          unique.push(a);
+        }
+      });
+      return unique;
+    }
+
     // Update Top Counters
     function updateStats() {
-      const total = allAttendees.length;
-      document.getElementById('totalCount').textContent = total;
-      const sat = allAttendees.filter(a => a.checked_in_saturday).length;
-      const sun = allAttendees.filter(a => a.checked_in_sunday).length;
+      const uniqueAttendees = getUniqueAttendees(allAttendees);
+      const totalUnique = uniqueAttendees.length;
+      const totalRaw = allAttendees.length;
+
+      document.getElementById('totalCount').textContent = totalUnique;
+      const totalCardSub = document.querySelector('.stat-card.c-amber .stat-detail');
+      if (totalCardSub) {
+        totalCardSub.textContent = `Unique verified students (${totalRaw} total)`;
+      }
+
+      const sat = uniqueAttendees.filter(a => a.checked_in_saturday).length;
+      const sun = uniqueAttendees.filter(a => a.checked_in_sunday).length;
       document.getElementById('satCount').textContent = sat;
       document.getElementById('sunCount').textContent = sun;
 
-      // Find top faculty
+      // Find top faculty among unique attendees
       const counts = {};
-      allAttendees.forEach(a => {
+      uniqueAttendees.forEach(a => {
         if (a.faculty) {
           const norm = normalizeFaculty(a.faculty);
           counts[norm] = (counts[norm] || 0) + 1;
@@ -994,7 +1034,7 @@
         if (c > maxC) { maxC = c; topF = f.replace('Faculty of ', ''); }
       });
       document.getElementById('topFacultyName').textContent = topF;
-      document.getElementById('topFacultyCount').textContent = `${maxC} Registrations`;
+      document.getElementById('topFacultyCount').textContent = `${maxC} Unique Registrations`;
     }
 
     // Render Real-time Faculty Colour Distribution Widget
@@ -1002,10 +1042,11 @@
       const grid = document.getElementById('teamDistributionGrid');
       if (!grid) return;
 
-      const total = allAttendees.length || 1;
+      const uniqueAttendees = getUniqueAttendees(allAttendees);
+      const total = uniqueAttendees.length || 1;
       const teamCounts = {};
 
-      allAttendees.forEach(a => {
+      uniqueAttendees.forEach(a => {
         const info = getFacultyInfo(a.faculty);
         teamCounts[info.team] = (teamCounts[info.team] || 0) + 1;
       });
@@ -1066,9 +1107,21 @@
         return;
       }
 
+      // Track duplicate phones
+      const phoneCounts = {};
+      allAttendees.forEach(a => {
+        const p = cleanPhoneNumber(a.phone_number);
+        if (p) phoneCounts[p] = (phoneCounts[p] || 0) + 1;
+      });
+      const seenFirstPhone = new Set();
+
       tbody.innerHTML = list.map(a => {
         const phone = a.phone_number || '';
-        const cleanPhone = phone.replace(/[\s\-\+]/g, '');
+        const cleanPhone = cleanPhoneNumber(phone);
+        const isDuplicate = cleanPhone && phoneCounts[cleanPhone] > 1;
+        const isRepeat = isDuplicate && seenFirstPhone.has(cleanPhone);
+        if (cleanPhone) seenFirstPhone.add(cleanPhone);
+
         const waPhone = cleanPhone.startsWith('0') ? '234' + cleanPhone.substring(1) : cleanPhone;
         
         const info = getFacultyInfo(a.faculty);
@@ -1092,7 +1145,10 @@
               </div>
             </td>
             <td>
-              <a href="tel:${phone}" style="color:var(--sky); font-weight:600; text-decoration:none;">${phone}</a>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <a href="tel:${phone}" style="color:var(--sky); font-weight:600; text-decoration:none;">${phone}</a>
+                ${isRepeat ? '<span style="font-size:9.5px; background:rgba(255,255,255,0.08); color:#A09E96; border:1px solid rgba(255,255,255,0.15); padding:1px 5px; border-radius:4px; font-weight:700;" title="Repeat submission with same phone number">REPEAT</span>' : ''}
+              </div>
             </td>
             <td>
               <div style="font-weight:600; margin-bottom:4px;">${escapeHtml(facultyShort)}</div>
@@ -1209,10 +1265,27 @@
       const team = document.getElementById('teamFilter').value;
       const status = document.getElementById('checkinFilter').value;
 
+      // Identify unique vs repeat entries
+      const seenFirstMap = new Set();
+      const firstUniqueIds = new Set();
+      allAttendees.forEach(a => {
+        const cp = cleanPhoneNumber(a.phone_number);
+        if (cp) {
+          if (!seenFirstMap.has(cp)) {
+            seenFirstMap.add(cp);
+            firstUniqueIds.add(a.id);
+          }
+        } else {
+          firstUniqueIds.add(a.id);
+        }
+      });
+
       const filtered = allAttendees.filter(a => {
         const info = getFacultyInfo(a.faculty);
         const normFac = normalizeFaculty(a.faculty);
         const studentLevel = a.level_of_study || a.study_level || a.level || '';
+        const cp = cleanPhoneNumber(a.phone_number);
+        const isUniqueAttendee = firstUniqueIds.has(a.id);
 
         const matchesQuery = !q || 
           (a.full_name && a.full_name.toLowerCase().includes(q)) ||
@@ -1232,6 +1305,8 @@
         if (status === 'sat') matchesStatus = a.checked_in_saturday === true;
         else if (status === 'sun') matchesStatus = a.checked_in_sunday === true;
         else if (status === 'unclaimed') matchesStatus = !a.checked_in_saturday && !a.checked_in_sunday;
+        else if (status === 'unique') matchesStatus = isUniqueAttendee;
+        else if (status === 'repeat') matchesStatus = !isUniqueAttendee;
 
         return matchesQuery && matchesLevel && matchesFac && matchesTeam && matchesStatus;
       });

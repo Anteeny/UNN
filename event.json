@@ -256,7 +256,14 @@
         "hex": "#FFB800",
         "team": "Team Yellow",
         "faculties": [
-          "Faculty of Basic Medical Sciences",
+          "Faculty of Basic Medical Sciences"
+        ]
+      },
+      {
+        "colorName": "Yellow",
+        "hex": "#FFB800",
+        "team": "Team Yellow",
+        "faculties": [
           "Faculty of Medical Sciences"
         ]
       },
